@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Phone, Home, Building2, Mail, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,9 +23,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-gold-dark flex items-center justify-center">
-              <span className="text-primary font-serif font-bold text-xl">D</span>
-            </div>
+            <img src={logo} alt="Dream Ladder Logo" className="w-10 h-10 rounded-lg object-cover" />
             <div className="flex flex-col">
               <span className="font-serif text-lg md:text-xl font-bold text-primary">Dream Ladder</span>
               <span className="text-[10px] text-muted-foreground -mt-1 hidden sm:block">Climb Towards Your Dreams</span>
@@ -51,7 +50,7 @@ const Navbar = () => {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
             <a href="tel:+917004088007">
-              <Button variant="outline" size="sm" className="gap-2 border-accent text-accent hover:bg-accent hover:text-primary">
+              <Button size="sm" className="gap-2 bg-accent/10 text-accent border border-accent hover:bg-accent hover:text-primary">
                 <Phone className="w-4 h-4" />
                 Call Now
               </Button>

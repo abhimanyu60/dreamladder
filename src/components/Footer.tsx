@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Twitter, Linkedin } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Footer = () => {
   return (
@@ -9,9 +10,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-gold-dark flex items-center justify-center">
-                <span className="text-primary font-serif font-bold text-xl">D</span>
-              </div>
+              <img src={logo} alt="Dream Ladder Logo" className="w-12 h-12 rounded-lg object-cover" />
               <div>
                 <h3 className="font-serif text-xl font-bold">Dream Ladder</h3>
                 <p className="text-xs text-primary-foreground/70">Real Estate Solutions</p>
@@ -122,7 +121,7 @@ const Footer = () => {
               © 2025 Dream Ladder. All rights reserved.
             </p>
             <p className="text-sm text-primary-foreground/60">
-              Owned by Abhishek Singh & Saurabh Singh
+              Owned by Abhishek Singh & Saurav Nath Shahdeo
             </p>
           </div>
         </div>
