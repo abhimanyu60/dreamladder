@@ -66,7 +66,7 @@ const About = () => {
               </h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  Dream Ladder was founded in 2014 by Abhishek Singh and Saurabh Singh with a simple mission: 
+                  Dream Ladder was founded in 2014 by Abhishek Singh and Saurav Nath Shahdeo with a simple mission: 
                   to make land ownership accessible and hassle-free for everyone in Jharkhand.
                 </p>
                 <p>
@@ -205,7 +205,7 @@ const About = () => {
           <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
             {[
               { name: "Abhishek Singh", role: "Co-Founder & Director" },
-              { name: "Saurabh Singh", role: "Co-Founder & Director" }
+              { name: "Saurav Nath Shahdeo", role: "Co-Founder & Director" }
             ].map((person, index) => (
               <div
                 key={index}
