@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { enquiriesAPI } from "@/lib/api";
 import { properties } from "@/data/properties";
 
 interface EnquiryFormProps {
@@ -33,15 +34,28 @@ const EnquiryForm = ({ selectedProperty, variant = "default" }: EnquiryFormProps
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      await enquiriesAPI.create({
+        type: "property_enquiry",
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        message: formData.message,
+        propertyId: formData.property || undefined,
+      });
 
-    toast.success("Enquiry submitted successfully!", {
-      description: "Our team will get back to you within 24 hours.",
-    });
+      toast.success("Enquiry submitted successfully!", {
+        description: "Our team will get back to you within 24 hours.",
+      });
 
-    setFormData({ name: "", phone: "", email: "", property: "", message: "" });
-    setIsSubmitting(false);
+      setFormData({ name: "", phone: "", email: "", property: "", message: "" });
+    } catch (error: any) {
+      toast.error("Failed to submit enquiry", {
+        description: error.message || "Please try again later.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isCompact = variant === "compact";

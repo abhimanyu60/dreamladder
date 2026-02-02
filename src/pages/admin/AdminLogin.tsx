@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { authAPI } from "@/lib/api";
 import logo from "@/assets/logo.png";
 
 const AdminLogin = () => {
@@ -19,24 +20,28 @@ const AdminLogin = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate login - replace with actual auth
-    setTimeout(() => {
-      if (email && password) {
+    try {
+      const response = await authAPI.login(email, password);
+      
+      if (response.success) {
         localStorage.setItem("adminLoggedIn", "true");
+        localStorage.setItem("adminUser", JSON.stringify(response.data.user));
+        
         toast({
           title: "Welcome back!",
-          description: "You have successfully logged in.",
+          description: `Logged in as ${response.data.user.name}`,
         });
         navigate("/admin/dashboard");
-      } else {
-        toast({
-          title: "Login failed",
-          description: "Please enter valid credentials.",
-          variant: "destructive",
-        });
       }
+    } catch (error: any) {
+      toast({
+        title: "Login failed",
+        description: error.message || "Please check your credentials and try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

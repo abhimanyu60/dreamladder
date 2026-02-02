@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -13,22 +13,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { properties, propertyTypes, areaOptions } from "@/data/properties";
+import { propertiesAPI } from "@/lib/api";
+import { propertyTypes, areaOptions } from "@/data/properties";
 
 const Properties = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedArea, setSelectedArea] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
+  const [properties, setProperties] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const params: any = { limit: 100 };
+        if (selectedType !== "all") params.type = selectedType;
+        
+        const response = await propertiesAPI.getAll(params);
+        if (response.success) {
+          setProperties(response.data.properties);
+        }
+      } catch (error) {
+        console.error("Failed to fetch properties:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, [selectedType]);
 
   const filteredProperties = properties.filter((property) => {
     const matchesSearch =
-      property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.locality.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      property.area.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === "all" || property.type === selectedType;
-    const matchesArea = selectedArea === "all" || property.area === selectedArea;
-    return matchesSearch && matchesType && matchesArea;
+      property.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      property.location?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesArea = selectedArea === "all" || property.location?.includes(selectedArea);
+    return matchesSearch && matchesArea;
   });
 
   const clearFilters = () => {

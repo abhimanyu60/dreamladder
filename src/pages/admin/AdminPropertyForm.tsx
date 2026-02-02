@@ -14,7 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { properties, propertyTypes, areaOptions } from "@/data/properties";
+import { propertiesAPI } from "@/lib/api";
+import { propertyTypes, areaOptions } from "@/data/properties";
 
 const AdminPropertyForm = () => {
   const { id } = useParams();
@@ -94,8 +95,31 @@ const AdminPropertyForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Convert form data to API format
+      const propertyData = {
+        title: formData.title,
+        description: formData.description,
+        shortDescription: formData.shortDescription,
+        price: parseFloat(formData.price),
+        pricePerSqFt: formData.pricePerSqFt ? parseFloat(formData.pricePerSqFt) : undefined,
+        area: formData.size,
+        location: `${formData.locality}, ${formData.area}`,
+        fullAddress: `${formData.locality}, ${formData.area}`,
+        googleMapsLink: formData.mapLink,
+        type: formData.type,
+        featured: formData.featured,
+        images: images,
+        amenities: formData.amenities.filter(a => a.trim() !== ''),
+        highlights: formData.highlights.filter(h => h.trim() !== ''),
+      };
+
+      if (isEditing && id) {
+        await propertiesAPI.update(id, propertyData);
+      } else {
+        await propertiesAPI.create(propertyData);
+      }
+
       toast({
         title: isEditing ? "Property updated" : "Property added",
         description: isEditing
@@ -103,8 +127,15 @@ const AdminPropertyForm = () => {
           : "The property has been added successfully.",
       });
       navigate("/admin/properties");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save property. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (

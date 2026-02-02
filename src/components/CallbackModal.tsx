@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { enquiriesAPI } from "@/lib/api";
 
 interface CallbackModalProps {
   trigger?: React.ReactNode;
@@ -45,16 +46,27 @@ const CallbackModal = ({ trigger }: CallbackModalProps) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      await enquiriesAPI.create({
+        type: "callback",
+        name: formData.name,
+        phone: formData.phone,
+        preferredTime: formData.preferredTime,
+      });
 
-    toast.success("Callback request submitted!", {
-      description: "Our team will call you within the selected time slot.",
-    });
+      toast.success("Callback request submitted!", {
+        description: "Our team will call you within the selected time slot.",
+      });
 
-    setFormData({ name: "", phone: "", preferredTime: "" });
-    setOpen(false);
-    setIsSubmitting(false);
+      setFormData({ name: "", phone: "", preferredTime: "" });
+      setOpen(false);
+    } catch (error: any) {
+      toast.error("Failed to submit request", {
+        description: error.message || "Please try again later.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
