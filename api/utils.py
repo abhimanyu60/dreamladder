@@ -36,15 +36,23 @@ def decode_access_token(token: str) -> Optional[dict]:
 
 def get_current_user(authorization: str):
     """Extract user from Authorization header"""
+    import logging
+    
     if not authorization or not authorization.startswith("Bearer "):
+        logging.error("No authorization header or invalid format")
         return None
     
     token = authorization.replace("Bearer ", "")
+    logging.info(f"Attempting to decode token: {token[:20]}...")
+    logging.info(f"Using JWT_SECRET_KEY: {settings.JWT_SECRET_KEY[:10]}...")
+    
     payload = decode_access_token(token)
     
     if not payload:
+        logging.error("Token decode failed")
         return None
     
+    logging.info(f"Token decoded successfully: {payload.get('email')}")
     return payload
 
 def create_response(success: bool = True, data: any = None, message: str = None, error: dict = None):
