@@ -114,7 +114,7 @@ const Contact = () => {
               <div className="flex flex-wrap gap-3">
                 <CallbackModal
                   trigger={
-                    <Button className="gap-2 bg-accent/10 text-accent border border-accent hover:bg-accent hover:text-primary">
+                    <Button className="gap-2 bg-accent text-primary font-semibold hover:bg-accent/90 shadow-md">
                       <Phone className="w-4 h-4" />
                       Request Callback
                     </Button>
