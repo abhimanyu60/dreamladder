@@ -49,7 +49,7 @@ const Hero = () => {
               </Button>
             </Link>
             <a href="tel:+917004088007">
-              <Button size="lg" variant="outline" className="gap-2 text-base border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button size="lg" variant="outline" className="gap-2 text-base bg-white/10 backdrop-blur-sm border-white/50 text-white hover:bg-white/20 hover:border-white">
                 <Phone className="w-5 h-5" />
                 Request Call Back
               </Button>

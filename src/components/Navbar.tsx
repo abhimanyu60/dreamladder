@@ -50,7 +50,7 @@ const Navbar = () => {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
             <a href="tel:+917004088007">
-              <Button size="sm" className="gap-2 bg-accent text-primary font-semibold hover:bg-accent/90 shadow-md">
+              <Button size="sm" className="gap-2 bg-accent text-primary font-semibold hover:bg-accent/90 shadow-md hover:shadow-lg transition-all">
                 <Phone className="w-4 h-4" />
                 Call Now
               </Button>
@@ -95,7 +95,7 @@ const Navbar = () => {
               })}
               <div className="flex flex-col gap-2 mt-4 px-4">
                 <a href="tel:+917004088007">
-                  <Button variant="outline" className="w-full gap-2 border-accent text-accent">
+                  <Button className="w-full gap-2 bg-accent text-primary font-semibold hover:bg-accent/90 shadow-md">
                     <Phone className="w-4 h-4" />
                     +91 7004088007
                   </Button>
