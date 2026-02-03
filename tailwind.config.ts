@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        serif: ['Playfair Display', 'serif'],
+        sans: ['Outfit', 'sans-serif'],
+        serif: ['Cormorant Garamond', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -23,15 +23,15 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        gold: {
-          DEFAULT: "hsl(var(--gold))",
-          light: "hsl(var(--gold-light))",
-          dark: "hsl(var(--gold-dark))",
+        copper: {
+          DEFAULT: "hsl(var(--copper))",
+          light: "hsl(var(--copper-light))",
+          dark: "hsl(var(--copper-dark))",
         },
-        navy: {
-          DEFAULT: "hsl(var(--navy))",
-          light: "hsl(var(--navy-light))",
-          dark: "hsl(var(--navy-dark))",
+        forest: {
+          DEFAULT: "hsl(var(--forest))",
+          light: "hsl(var(--forest-light))",
+          dark: "hsl(var(--forest-dark))",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -117,10 +117,10 @@ export default {
         "shimmer": "shimmer 2s infinite linear",
       },
       boxShadow: {
-        'gold': '0 4px 14px 0 hsl(40 75% 50% / 0.3)',
-        'gold-lg': '0 6px 20px 0 hsl(40 75% 50% / 0.4)',
-        'card': '0 4px 6px -1px hsl(222 47% 11% / 0.1), 0 2px 4px -2px hsl(222 47% 11% / 0.1)',
-        'card-hover': '0 20px 25px -5px hsl(222 47% 11% / 0.1), 0 8px 10px -6px hsl(222 47% 11% / 0.1)',
+        'copper': '0 4px 14px 0 hsl(18 75% 55% / 0.25)',
+        'copper-lg': '0 6px 20px 0 hsl(18 75% 55% / 0.35)',
+        'card': '0 4px 6px -1px hsl(20 25% 12% / 0.08), 0 2px 4px -2px hsl(20 25% 12% / 0.06)',
+        'card-hover': '0 20px 25px -5px hsl(20 25% 12% / 0.1), 0 8px 10px -6px hsl(20 25% 12% / 0.08)',
       },
     },
   },

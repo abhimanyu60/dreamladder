@@ -44,7 +44,8 @@ const AdminPropertyForm = () => {
 
   useEffect(() => {
     if (isEditing && id) {
-      const property = properties.find((p) => p.id === id);
+      // TODO: Fetch property from API when backend is ready
+      const property = null; // Will be fetched from API
       if (property) {
         setFormData({
           title: property.title,
