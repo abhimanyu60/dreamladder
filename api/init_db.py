@@ -1,6 +1,6 @@
 """Initialize database and create admin user"""
 import os
-os.environ['DATABASE_URL'] = 'postgresql://neondb_owner:npg_Uryxui1COWw7@ep-plain-pond-a8vbwc1v-pooler.eastus2.azure.neon.tech/neondb?sslmode=require'
+os.environ['DATABASE_URL'] = 'postgresql://dreamladderadmin:DreamLadder2024!Secure@dreamladder-db.postgres.database.azure.com:5432/dreamladder?sslmode=require'
 
 from models import init_db, SessionLocal, AdminUser
 from utils import get_password_hash

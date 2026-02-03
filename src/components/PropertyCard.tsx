@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import { MapPin, Maximize, Tag, ArrowRight } from "lucide-react";
-import { Property } from "@/data/properties";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 interface PropertyCardProps {
-  property: Property;
+  property: any; // Support both API and local property formats
 }
 
 const PropertyCard = ({ property }: PropertyCardProps) => {
@@ -15,6 +14,28 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
     commercial: "bg-blue-500/10 text-blue-600 border-blue-500/20",
     investment: "bg-purple-500/10 text-purple-600 border-purple-500/20",
   };
+
+  // Format price - handle both number and string formats
+  const formatPrice = (price: number | string) => {
+    if (typeof price === 'string') return price;
+    const crores = price / 10000000;
+    const lakhs = price / 100000;
+    if (crores >= 1) {
+      return `₹${crores.toFixed(2)} Cr`;
+    }
+    return `₹${lakhs.toFixed(2)} L`;
+  };
+
+  const formatPricePerSqFt = (pricePerSqFt?: number | string) => {
+    if (!pricePerSqFt) return undefined;
+    if (typeof pricePerSqFt === 'string') return pricePerSqFt;
+    return `₹${pricePerSqFt.toLocaleString()}/sq ft`;
+  };
+
+  const displayPrice = formatPrice(property.price);
+  const displayPricePerSqFt = formatPricePerSqFt(property.pricePerSqFt);
+  const displayLocation = property.locality || property.location;
+  const displaySize = property.size || property.area;
 
   return (
     <div className="card-property group">
@@ -39,9 +60,9 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
 
         {/* Price */}
         <div className="absolute bottom-4 left-4 right-4">
-          <p className="text-2xl font-serif font-bold text-primary-foreground">{property.price}</p>
-          {property.pricePerSqFt && (
-            <p className="text-sm text-primary-foreground/80">{property.pricePerSqFt}</p>
+          <p className="text-2xl font-serif font-bold text-primary-foreground">{displayPrice}</p>
+          {displayPricePerSqFt && (
+            <p className="text-sm text-primary-foreground/80">{displayPricePerSqFt}</p>
           )}
         </div>
       </div>
@@ -54,7 +75,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           </h3>
           <div className="flex items-center gap-1 mt-1 text-muted-foreground">
             <MapPin className="w-4 h-4" />
-            <span className="text-sm">{property.locality}</span>
+            <span className="text-sm">{displayLocation}</span>
           </div>
         </div>
 
@@ -66,12 +87,14 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
         <div className="flex items-center gap-4 pt-2 border-t border-border">
           <div className="flex items-center gap-1.5">
             <Maximize className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium">{property.size}</span>
+            <span className="text-sm font-medium">{displaySize}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <Tag className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium capitalize">{property.area}</span>
-          </div>
+          {property.area && (
+            <div className="flex items-center gap-1.5">
+              <Tag className="w-4 h-4 text-accent" />
+              <span className="text-sm font-medium capitalize">{property.area}</span>
+            </div>
+          )}
         </div>
 
         {/* CTA */}

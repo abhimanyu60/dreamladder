@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Phone, Mail, MessageSquare, Check, X, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,101 +19,80 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
+import { enquiriesAPI } from "@/lib/api";
 
 interface Enquiry {
-  id: number;
+  id: string;
   name: string;
   phone: string;
   email?: string;
-  property: string;
+  propertyId?: string;
   message?: string;
-  type: "enquiry" | "callback";
+  type: "callback" | "property_enquiry" | "general";
   status: "pending" | "contacted" | "closed";
   preferredTime?: string;
   createdAt: string;
 }
 
-const mockEnquiries: Enquiry[] = [
-  {
-    id: 1,
-    name: "Rahul Kumar",
-    phone: "+91 9876543210",
-    email: "rahul@email.com",
-    property: "Premium Residential Plot in Bariatu",
-    message: "I am interested in visiting this property. Please contact me.",
-    type: "enquiry",
-    status: "pending",
-    createdAt: "2025-01-30T10:30:00",
-  },
-  {
-    id: 2,
-    name: "Priya Singh",
-    phone: "+91 8765432109",
-    property: "Agricultural Land in Ormanjhi",
-    type: "callback",
-    status: "contacted",
-    preferredTime: "Morning (9AM - 12PM)",
-    createdAt: "2025-01-30T08:15:00",
-  },
-  {
-    id: 3,
-    name: "Amit Sharma",
-    phone: "+91 7654321098",
-    email: "amit.sharma@email.com",
-    property: "Plotted Development in Ratu",
-    message: "Looking for plots under 30 lakhs. Is this negotiable?",
-    type: "enquiry",
-    status: "pending",
-    createdAt: "2025-01-29T16:45:00",
-  },
-  {
-    id: 4,
-    name: "Neha Gupta",
-    phone: "+91 6543210987",
-    property: "Investment Land in Hatia",
-    type: "callback",
-    status: "closed",
-    preferredTime: "Evening (5PM - 8PM)",
-    createdAt: "2025-01-28T14:20:00",
-  },
-  {
-    id: 5,
-    name: "Vikash Mehta",
-    phone: "+91 5432109876",
-    email: "vikash.m@email.com",
-    property: "Premium Residential Plot in Bariatu",
-    message: "Can you arrange a site visit this weekend?",
-    type: "enquiry",
-    status: "contacted",
-    createdAt: "2025-01-27T11:00:00",
-  },
-];
-
 const AdminEnquiries = () => {
   const { toast } = useToast();
-  const [enquiries, setEnquiries] = useState<Enquiry[]>(mockEnquiries);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
+  useEffect(() => {
+    fetchEnquiries();
+  }, []);
+
+  const fetchEnquiries = async () => {
+    try {
+      setLoading(true);
+      const response = await enquiriesAPI.getAll({ limit: 100 });
+      if (response.success && response.data) {
+        setEnquiries(response.data.enquiries || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch enquiries:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load enquiries. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredEnquiries = enquiries.filter((enquiry) => {
     const matchesSearch =
       enquiry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      enquiry.property.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (enquiry.propertyId && enquiry.propertyId.toLowerCase().includes(searchQuery.toLowerCase())) ||
       enquiry.phone.includes(searchQuery);
     const matchesType = typeFilter === "all" || enquiry.type === typeFilter;
     const matchesStatus = statusFilter === "all" || enquiry.status === statusFilter;
     return matchesSearch && matchesType && matchesStatus;
   });
 
-  const updateStatus = (id: number, status: Enquiry["status"]) => {
-    setEnquiries(
-      enquiries.map((e) => (e.id === id ? { ...e, status } : e))
-    );
-    toast({
-      title: "Status updated",
-      description: `Enquiry marked as ${status}.`,
-    });
+  const updateStatus = async (id: string, status: Enquiry["status"]) => {
+    try {
+      // For now, just update locally since we need to add the endpoint
+      setEnquiries(
+        enquiries.map((e) => (e.id === id ? { ...e, status } : e))
+      );
+      toast({
+        title: "Status updated",
+        description: `Enquiry marked as ${status}.`,
+      });
+    } catch (error) {
+      console.error('Failed to update status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update status. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -156,14 +135,15 @@ const AdminEnquiries = () => {
         </div>
         <div className="flex gap-2">
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[160px]">
               <Filter className="w-4 h-4 mr-2" />
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="enquiry">Enquiry</SelectItem>
               <SelectItem value="callback">Callback</SelectItem>
+              <SelectItem value="property_enquiry">Property Enquiry</SelectItem>
+              <SelectItem value="general">General</SelectItem>
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -194,7 +174,20 @@ const AdminEnquiries = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredEnquiries.map((enquiry) => (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  Loading enquiries...
+                </TableCell>
+              </TableRow>
+            ) : filteredEnquiries.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  No enquiries found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredEnquiries.map((enquiry) => (
               <TableRow key={enquiry.id}>
                 <TableCell>
                   <div>
@@ -207,7 +200,9 @@ const AdminEnquiries = () => {
                 </TableCell>
                 <TableCell>
                   <div>
-                    <p className="text-foreground line-clamp-1">{enquiry.property}</p>
+                    <p className="text-foreground line-clamp-1">
+                      {enquiry.propertyId || 'General Enquiry'}
+                    </p>
                     {enquiry.message && (
                       <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
                         "{enquiry.message}"
@@ -227,7 +222,9 @@ const AdminEnquiries = () => {
                     ) : (
                       <MessageSquare className="w-4 h-4 text-primary" />
                     )}
-                    <span className="capitalize">{enquiry.type}</span>
+                    <span className="capitalize text-sm">
+                      {enquiry.type === 'property_enquiry' ? 'Property' : enquiry.type}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>
@@ -275,13 +272,7 @@ const AdminEnquiries = () => {
                   </div>
                 </TableCell>
               </TableRow>
-            ))}
-            {filteredEnquiries.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                  No enquiries found.
-                </TableCell>
-              </TableRow>
+            ))
             )}
           </TableBody>
         </Table>

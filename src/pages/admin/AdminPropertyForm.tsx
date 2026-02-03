@@ -41,30 +41,104 @@ const AdminPropertyForm = () => {
 
   const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (isEditing && id) {
-      const property = properties.find((p) => p.id === id);
-      if (property) {
-        setFormData({
-          title: property.title,
-          size: property.size,
-          price: property.price,
-          pricePerSqFt: property.pricePerSqFt || "",
-          area: property.area,
-          locality: property.locality,
-          description: property.description,
-          shortDescription: property.shortDescription,
-          type: property.type,
-          featured: property.featured,
-          mapLink: property.mapLink,
-          amenities: property.amenities.length > 0 ? property.amenities : [""],
-          highlights: property.highlights.length > 0 ? property.highlights : [""],
-        });
-        setImages(property.images);
+    const fetchProperty = async () => {
+      if (isEditing && id) {
+        try {
+          setIsLoading(true);
+          const response = await propertiesAPI.getById(id);
+          if (response.success) {
+            const property = response.data.property;
+            setFormData({
+              title: property.title,
+              size: property.area,
+              price: property.price.toString(),
+              pricePerSqFt: property.pricePerSqFt?.toString() || "",
+              area: property.location.split(',')[1]?.trim() || "",
+              locality: property.location,
+              description: property.description,
+              shortDescription: property.shortDescription,
+              type: property.type,
+              featured: property.featured,
+              mapLink: property.googleMapsLink,
+              amenities: property.amenities.length > 0 ? property.amenities : [""],
+              highlights: property.highlights.length > 0 ? property.highlights : [""],
+            });
+            setImages(property.images);
+          }
+        } catch (error) {
+          console.error("Failed to fetch property:", error);
+          toast({
+            title: "Error",
+            description: "Failed to load property data",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoading(false);
+        }
       }
-    }
+    };
+    fetchProperty();
   }, [id, isEditing]);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid file",
+          description: "Please select an image file",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Image must be less than 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create a data URL for preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setImages((prev) => [...prev, result]);
+        toast({
+          title: "Image added",
+          description: "Image uploaded successfully",
+        });
+      };
+      reader.onerror = () => {
+        toast({
+          title: "Upload failed",
+          description: "Failed to read image file",
+          variant: "destructive",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset input
+    e.target.value = '';
+  };
+
+  const handleImageUrlAdd = () => {
+    const url = prompt("Enter image URL:");
+    if (url && url.trim()) {
+      setImages((prev) => [...prev, url.trim()]);
+      toast({
+        title: "Image added",
+        description: "Image URL added successfully",
+      });
+    }
+  };
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -104,10 +178,12 @@ const AdminPropertyForm = () => {
         price: parseFloat(formData.price),
         pricePerSqFt: formData.pricePerSqFt ? parseFloat(formData.pricePerSqFt) : undefined,
         area: formData.size,
+        areaInSqFt: parseInt(formData.size.replace(/[^0-9]/g, '')) || 0,
         location: `${formData.locality}, ${formData.area}`,
         fullAddress: `${formData.locality}, ${formData.area}`,
         googleMapsLink: formData.mapLink,
         type: formData.type,
+        status: "available",
         featured: formData.featured,
         images: images,
         amenities: formData.amenities.filter(a => a.trim() !== ''),
@@ -286,7 +362,12 @@ const AdminPropertyForm = () => {
 
         {/* Images */}
         <div className="bg-card rounded-xl border border-border p-6 space-y-4">
-          <h2 className="font-semibold text-lg">Images</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-lg">Images</h2>
+            <Button type="button" variant="outline" size="sm" onClick={handleImageUrlAdd}>
+              Add URL
+            </Button>
+          </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {images.map((image, index) => (
@@ -304,11 +385,11 @@ const AdminPropertyForm = () => {
             <label className="aspect-square rounded-lg border-2 border-dashed border-border hover:border-accent transition-colors cursor-pointer flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-accent">
               <Upload className="w-6 h-6" />
               <span className="text-xs">Upload</span>
-              <input type="file" accept="image/*" className="hidden" />
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
             </label>
           </div>
           <p className="text-xs text-muted-foreground">
-            Upload property images. First image will be used as the main image.
+            Upload property images or add image URLs. First image will be used as the main image.
           </p>
         </div>
 

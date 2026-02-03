@@ -2,13 +2,42 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PropertyCard from "./PropertyCard";
-import { properties } from "@/data/properties";
+import { propertiesAPI } from "@/lib/api";
+import { useState, useEffect } from "react";
 
 const FeaturedProperties = () => {
-  const featuredProperties = properties.filter((p) => p.featured);
+  const [featuredProperties, setFeaturedProperties] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedProperties = async () => {
+      try {
+        const response = await propertiesAPI.getAll({ featured: true, limit: 6 });
+        if (response.success) {
+          setFeaturedProperties(response.data.properties);
+        }
+      } catch (error) {
+        console.error("Failed to fetch featured properties:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeaturedProperties();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section className="section-padding" style={{ backgroundColor: '#F5F1E8' }}>
+        <div className="container mx-auto">
+          <div className="text-center py-12">Loading featured properties...</div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section className="section-padding bg-background">
+    <section className="section-padding" style={{ backgroundColor: '#F5F1E8' }}>
       <div className="container mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">

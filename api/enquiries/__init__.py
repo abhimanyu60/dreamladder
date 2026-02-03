@@ -92,20 +92,25 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             
             enquiries_data = []
             for enq in enquiries:
-                enquiries_data.append({
-                    "id": enq.id,
-                    "type": enq.type.value if enq.type else None,
-                    "name": enq.name,
-                    "email": enq.email,
-                    "phone": enq.phone,
-                    "message": enq.message,
-                    "preferredTime": enq.preferred_time,
-                    "propertyId": enq.property_id,
-                    "status": enq.status.value if enq.status else None,
-                    "notes": enq.notes,
-                    "createdAt": enq.created_at.isoformat() if enq.created_at else None,
-                    "updatedAt": enq.updated_at.isoformat() if enq.updated_at else None
-                })
+                try:
+                    enquiries_data.append({
+                        "id": enq.id,
+                        "type": enq.type.value if hasattr(enq.type, 'value') else str(enq.type) if enq.type else None,
+                        "name": enq.name,
+                        "email": enq.email,
+                        "phone": enq.phone,
+                        "message": enq.message,
+                        "preferredTime": enq.preferred_time,
+                        "propertyId": enq.property_id,
+                        "status": enq.status.value if hasattr(enq.status, 'value') else str(enq.status) if enq.status else None,
+                        "notes": enq.notes,
+                        "createdAt": enq.created_at.isoformat() if enq.created_at else None,
+                        "updatedAt": enq.updated_at.isoformat() if enq.updated_at else None
+                    })
+                except Exception as e:
+                    # Log error but continue processing other enquiries
+                    print(f"Error processing enquiry {enq.id}: {str(e)}")
+                    continue
             
             response = create_response(
                 data={

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send, User, Phone, Mail, Building2, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { enquiriesAPI } from "@/lib/api";
-import { properties } from "@/data/properties";
+import { enquiriesAPI, propertiesAPI } from "@/lib/api";
 
 interface EnquiryFormProps {
   selectedProperty?: string;
@@ -22,6 +21,7 @@ interface EnquiryFormProps {
 
 const EnquiryForm = ({ selectedProperty, variant = "default" }: EnquiryFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [properties, setProperties] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -29,6 +29,20 @@ const EnquiryForm = ({ selectedProperty, variant = "default" }: EnquiryFormProps
     property: selectedProperty || "",
     message: "",
   });
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const response = await propertiesAPI.getAll({ limit: 100 });
+        if (response.success) {
+          setProperties(response.data.properties);
+        }
+      } catch (error) {
+        console.error('Failed to fetch properties:', error);
+      }
+    };
+    fetchProperties();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

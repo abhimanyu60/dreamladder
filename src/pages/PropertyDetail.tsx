@@ -1,17 +1,54 @@
 import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { ArrowLeft, MapPin, Maximize, Tag, CheckCircle2, Phone, MessageCircle, Share2, Heart, ExternalLink } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EnquiryForm from "@/components/EnquiryForm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { properties } from "@/data/properties";
+import { propertiesAPI } from "@/lib/api";
 
 const PropertyDetail = () => {
   const { id } = useParams();
-  const property = properties.find((p) => p.id === id);
+  const [property, setProperty] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  if (!property) {
+  useEffect(() => {
+    const fetchProperty = async () => {
+      if (!id) return;
+      
+      try {
+        const response = await propertiesAPI.getById(id);
+        if (response.success) {
+          setProperty(response.data.property);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error("Failed to fetch property:", err);
+        setError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-4 pt-32 pb-16 text-center">
+          <p className="text-muted-foreground">Loading property details...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !property) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
@@ -27,7 +64,7 @@ const PropertyDetail = () => {
     );
   }
 
-  const whatsappLink = `https://wa.me/917004088007?text=Hello%20Dream%20Ladder%2C%20I%20am%20interested%20in%20${encodeURIComponent(property.title)}%20(${encodeURIComponent(property.price)})`;
+  const whatsappLink = `https://wa.me/917004088007?text=Hello%20Dream%20Ladder%2C%20I%20am%20interested%20in%20${encodeURIComponent(property.title)}`;
 
   const typeColors = {
     residential: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
@@ -35,6 +72,29 @@ const PropertyDetail = () => {
     commercial: "bg-blue-500/10 text-blue-600 border-blue-500/20",
     investment: "bg-purple-500/10 text-purple-600 border-purple-500/20",
   };
+
+  // Format price
+  const formatPrice = (price: number | string) => {
+    if (typeof price === 'string') return price;
+    const crores = price / 10000000;
+    const lakhs = price / 100000;
+    if (crores >= 1) {
+      return `₹${crores.toFixed(2)} Cr`;
+    }
+    return `₹${lakhs.toFixed(2)} L`;
+  };
+
+  const formatPricePerSqFt = (pricePerSqFt?: number | string) => {
+    if (!pricePerSqFt) return undefined;
+    if (typeof pricePerSqFt === 'string') return pricePerSqFt;
+    return `₹${pricePerSqFt.toLocaleString()}/sq ft`;
+  };
+
+  const displayPrice = formatPrice(property.price);
+  const displayPricePerSqFt = formatPricePerSqFt(property.pricePerSqFt);
+  const displayLocation = property.location || property.locality;
+  const displaySize = property.area;
+  const displayMapLink = property.googleMapsLink || property.mapLink;
 
   return (
     <div className="min-h-screen bg-background">
@@ -93,13 +153,13 @@ const PropertyDetail = () => {
                     </h1>
                     <div className="flex items-center gap-2 mt-2 text-muted-foreground">
                       <MapPin className="w-5 h-5" />
-                      <span>{property.locality}</span>
+                      <span>{displayLocation}</span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-3xl font-serif font-bold text-accent">{property.price}</p>
-                    {property.pricePerSqFt && (
-                      <p className="text-sm text-muted-foreground">{property.pricePerSqFt}</p>
+                    <p className="text-3xl font-serif font-bold text-accent">{displayPrice}</p>
+                    {displayPricePerSqFt && (
+                      <p className="text-sm text-muted-foreground">{displayPricePerSqFt}</p>
                     )}
                   </div>
                 </div>
@@ -108,12 +168,14 @@ const PropertyDetail = () => {
                 <div className="flex flex-wrap gap-4 pt-4 border-t border-border">
                   <div className="flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-lg">
                     <Maximize className="w-5 h-5 text-accent" />
-                    <span className="font-medium">{property.size}</span>
+                    <span className="font-medium">{displaySize}</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-lg">
-                    <Tag className="w-5 h-5 text-accent" />
-                    <span className="font-medium capitalize">{property.area}</span>
-                  </div>
+                  {property.type && (
+                    <div className="flex items-center gap-2 bg-muted/50 px-4 py-2 rounded-lg">
+                      <Tag className="w-5 h-5 text-accent" />
+                      <span className="font-medium capitalize">{property.type}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -153,7 +215,7 @@ const PropertyDetail = () => {
                 <div className="flex items-center justify-between">
                   <h2 className="font-serif text-xl font-semibold text-foreground">Location</h2>
                   <a
-                    href={property.mapLink}
+                    href={displayMapLink}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-accent hover:underline flex items-center gap-1"
@@ -164,7 +226,7 @@ const PropertyDetail = () => {
                 </div>
                 <div className="rounded-xl overflow-hidden border border-border">
                   <iframe
-                    src={`https://maps.google.com/maps?q=${property.locality}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(displayLocation)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                     width="100%"
                     height="300"
                     style={{ border: 0 }}
