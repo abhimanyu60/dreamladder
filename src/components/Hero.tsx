@@ -15,23 +15,25 @@ const Hero = () => {
           alt="Premium Land Development in Ranchi"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/60" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-forest/95 via-forest/85 to-forest-dark/75" />
+        <div className="absolute inset-0 bg-gradient-to-t from-forest-dark/60 via-transparent to-transparent" />
+        {/* Subtle texture overlay */}
+        <div className="absolute inset-0 texture-overlay pointer-events-none" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 pt-20">
         <div className="max-w-3xl">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 border border-accent/30 mb-6 animate-fade-in">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-sm font-medium text-accent">Jharkhand's Trusted Land Partner</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-copper/15 border border-copper/30 mb-6 animate-fade-in backdrop-blur-sm">
+            <span className="w-2 h-2 rounded-full bg-copper animate-pulse" />
+            <span className="text-sm font-medium text-copper-light tracking-wide uppercase">Jharkhand's Trusted Land Partner</span>
           </div>
 
           {/* Heading */}
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl font-bold text-primary-foreground leading-[1.1] mb-6 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
             Helping You Climb Towards Your{" "}
-            <span className="gradient-text">Dream Property</span>
+            <span className="gradient-text italic">Dream Property</span>
           </h1>
 
           {/* Subheading */}
@@ -63,7 +65,7 @@ const Hero = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8 border-t border-primary-foreground/20 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-8 border-t border-primary-foreground/20 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
             {[
               { value: "50+", label: "Properties Listed" },
               { value: "200+", label: "Happy Clients" },
@@ -71,8 +73,8 @@ const Hero = () => {
               { value: "100%", label: "Legal Verified" },
             ].map((stat, index) => (
               <div key={index} className="text-center md:text-left">
-                <p className="text-2xl md:text-3xl font-serif font-bold text-accent">{stat.value}</p>
-                <p className="text-sm text-primary-foreground/70">{stat.label}</p>
+                <p className="text-3xl md:text-4xl font-serif font-bold text-copper">{stat.value}</p>
+                <p className="text-sm text-primary-foreground/60 tracking-wide">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -81,8 +83,8 @@ const Hero = () => {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 rounded-full border-2 border-primary-foreground/30 flex justify-center pt-2">
-          <div className="w-1.5 h-3 rounded-full bg-accent" />
+        <div className="w-6 h-10 rounded-md border-2 border-primary-foreground/30 flex justify-center pt-2">
+          <div className="w-1.5 h-3 rounded-sm bg-copper" />
         </div>
       </div>
     </section>
