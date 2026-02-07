@@ -34,18 +34,27 @@ const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     headers,
   });
 
-  // Handle 404 with empty body
-  if (response.status === 404) {
-    const text = await response.text();
-    if (!text) {
-      throw new Error('Endpoint not found');
+  // Get response text first
+  const text = await response.text();
+  
+  // Handle empty responses
+  if (!text) {
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
     }
+    return null;
   }
 
-  const data = await response.json();
+  // Parse JSON
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`Invalid JSON response: ${text}`);
+  }
 
   if (!response.ok) {
-    throw new Error(data.error?.message || 'API request failed');
+    throw new Error(data.error?.message || data.error || 'API request failed');
   }
 
   return data;
@@ -201,6 +210,65 @@ export const settingsAPI = {
       method: 'PUT',
       body: JSON.stringify(settings),
     });
+  },
+};
+
+// Financial API
+export const financialAPI = {
+  // Transactions
+  transactions: {
+    list: async (filters?: { type?: string; category?: string; start_date?: string; end_date?: string }) => {
+      const params = new URLSearchParams(filters as Record<string, string>);
+      const query = params.toString();
+      return apiFetch(`/transactions${query ? `?${query}` : ''}`);
+    },
+    get: async (id: string) => {
+      return apiFetch(`/transactions/${id}`);
+    },
+    create: async (transaction: any) => {
+      return apiFetch('/transactions', {
+        method: 'POST',
+        body: JSON.stringify(transaction),
+      });
+    },
+    update: async (id: string, transaction: any) => {
+      return apiFetch(`/transactions/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(transaction),
+      });
+    },
+    delete: async (id: string) => {
+      return apiFetch(`/transactions/${id}`, {
+        method: 'DELETE',
+      });
+    },
+  },
+  
+  // Receipts
+  receipts: {
+    list: async () => {
+      return apiFetch('/receipts');
+    },
+    get: async (id: string) => {
+      return apiFetch(`/receipts/${id}`);
+    },
+    create: async (receipt: any) => {
+      return apiFetch('/receipts', {
+        method: 'POST',
+        body: JSON.stringify(receipt),
+      });
+    },
+    update: async (id: string, receipt: any) => {
+      return apiFetch(`/receipts/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(receipt),
+      });
+    },
+    delete: async (id: string) => {
+      return apiFetch(`/receipts/${id}`, {
+        method: 'DELETE',
+      });
+    },
   },
 };
 

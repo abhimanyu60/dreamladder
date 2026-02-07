@@ -18,6 +18,9 @@ import AdminProperties from "./pages/admin/AdminProperties";
 import AdminEnquiries from "./pages/admin/AdminEnquiries";
 import AdminPropertyForm from "./pages/admin/AdminPropertyForm";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminFinance from "./pages/admin/AdminFinance";
+import AdminTransactions from "./pages/admin/AdminTransactions";
+import AdminReceipts from "./pages/admin/AdminReceipts";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +46,9 @@ const App = () => (
             <Route path="properties/new" element={<AdminPropertyForm />} />
             <Route path="properties/edit/:id" element={<AdminPropertyForm />} />
             <Route path="enquiries" element={<AdminEnquiries />} />
+            <Route path="finance" element={<AdminFinance />} />
+            <Route path="finance/transactions" element={<AdminTransactions />} />
+            <Route path="finance/receipts" element={<AdminReceipts />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
           

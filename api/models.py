@@ -29,6 +29,35 @@ class EnquiryStatus(str, enum.Enum):
     CONTACTED = "contacted"
     CLOSED = "closed"
 
+class TransactionType(str, enum.Enum):
+    INCOME = "income"
+    EXPENSE = "expense"
+
+class TransactionCategory(str, enum.Enum):
+    # Income categories
+    PROPERTY_SALE = "property_sale"
+    COMMISSION = "commission"
+    CONSULTATION_FEE = "consultation_fee"
+    OTHER_INCOME = "other_income"
+    
+    # Expense categories
+    MARKETING = "marketing"
+    SALARY = "salary"
+    OFFICE_RENT = "office_rent"
+    UTILITIES = "utilities"
+    MAINTENANCE = "maintenance"
+    LEGAL_FEES = "legal_fees"
+    TAXES = "taxes"
+    OTHER_EXPENSE = "other_expense"
+
+class PaymentMethod(str, enum.Enum):
+    CASH = "cash"
+    BANK_TRANSFER = "bank_transfer"
+    CHEQUE = "cheque"
+    UPI = "upi"
+    CARD = "card"
+    OTHER = "other"
+
 class Property(Base):
     __tablename__ = "properties"
     
@@ -94,6 +123,53 @@ class Setting(Base):
     key = Column(String(100), unique=True, nullable=False)
     value = Column(JSON, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+    
+    id = Column(String, primary_key=True)
+    type = Column(SQLEnum(TransactionType), nullable=False)
+    category = Column(SQLEnum(TransactionCategory), nullable=False)
+    amount = Column(Float, nullable=False)
+    description = Column(Text)
+    payment_method = Column(SQLEnum(PaymentMethod))
+    reference_number = Column(String(100))
+    property_id = Column(String, ForeignKey("properties.id", ondelete="SET NULL"))
+    customer_name = Column(String(255))
+    customer_phone = Column(String(20))
+    customer_email = Column(String(255))
+    transaction_date = Column(DateTime, nullable=False)
+    notes = Column(Text)
+    created_by = Column(String, ForeignKey("admin_users.id"))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    property = relationship("Property", foreign_keys=[property_id])
+    creator = relationship("AdminUser", foreign_keys=[created_by])
+
+class Receipt(Base):
+    __tablename__ = "receipts"
+    
+    id = Column(String, primary_key=True)
+    receipt_number = Column(String(100), unique=True, nullable=False)
+    transaction_id = Column(String, ForeignKey("transactions.id", ondelete="CASCADE"))
+    customer_name = Column(String(255), nullable=False)
+    customer_phone = Column(String(20))
+    customer_email = Column(String(255))
+    customer_address = Column(Text)
+    amount = Column(Float, nullable=False)
+    amount_in_words = Column(String(500))
+    description = Column(Text, nullable=False)
+    payment_method = Column(SQLEnum(PaymentMethod))
+    property_details = Column(JSON)
+    issue_date = Column(DateTime, nullable=False)
+    notes = Column(Text)
+    created_by = Column(String, ForeignKey("admin_users.id"))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    transaction = relationship("Transaction", foreign_keys=[transaction_id])
+    creator = relationship("AdminUser", foreign_keys=[created_by])
 
 def get_db():
     db = SessionLocal()

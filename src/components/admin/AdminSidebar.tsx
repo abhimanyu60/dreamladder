@@ -6,7 +6,10 @@ import {
   Settings, 
   LogOut,
   Plus,
-  Home
+  Home,
+  DollarSign,
+  Receipt,
+  TrendingUp
 } from "lucide-react";
 import {
   Sidebar,
@@ -29,7 +32,14 @@ const menuItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
   { title: "Properties", url: "/admin/properties", icon: Building2 },
   { title: "Enquiries", url: "/admin/enquiries", icon: MessageSquare },
+  { title: "Finance", url: "/admin/finance", icon: DollarSign },
   { title: "Settings", url: "/admin/settings", icon: Settings },
+];
+
+const financeMenuItems = [
+  { title: "Overview", url: "/admin/finance", icon: TrendingUp },
+  { title: "Transactions", url: "/admin/finance/transactions", icon: DollarSign },
+  { title: "Receipts", url: "/admin/finance/receipts", icon: Receipt },
 ];
 
 const AdminSidebar = () => {
@@ -93,6 +103,38 @@ const AdminSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Financial Management Submenu */}
+        {location.pathname.startsWith("/admin/finance") && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Financial Management</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {financeMenuItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive(item.url)}
+                      tooltip={item.title}
+                    >
+                      <a
+                        href={item.url}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(item.url);
+                        }}
+                        className="flex items-center gap-3 pl-2"
+                      >
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarGroup>
           <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
