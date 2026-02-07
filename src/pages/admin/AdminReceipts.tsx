@@ -112,6 +112,156 @@ export default function AdminReceipts() {
     window.print();
   };
 
+  const downloadReceipt = () => {
+    if (!viewingReceipt) return;
+    
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    // Generate HTML content
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Receipt - ${viewingReceipt.receipt_number}</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              max-width: 800px;
+              margin: 40px auto;
+              padding: 20px;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+              border-bottom: 2px solid #333;
+              padding-bottom: 20px;
+            }
+            .company-name {
+              font-size: 28px;
+              font-weight: bold;
+              color: #333;
+            }
+            .receipt-info {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 30px;
+            }
+            .customer-details {
+              background: #f5f5f5;
+              padding: 15px;
+              border-radius: 5px;
+              margin-bottom: 30px;
+            }
+            .payment-details {
+              margin-bottom: 30px;
+            }
+            .detail-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 10px 0;
+              border-bottom: 1px solid #ddd;
+            }
+            .amount-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 15px 0;
+              border-top: 2px dashed #333;
+              font-size: 18px;
+              font-weight: bold;
+            }
+            .amount-words {
+              background: #f5f5f5;
+              padding: 10px;
+              border-radius: 5px;
+              margin: 10px 0;
+              font-weight: bold;
+            }
+            .footer {
+              margin-top: 40px;
+              text-align: center;
+              color: #666;
+              font-size: 12px;
+              border-top: 1px solid #ddd;
+              padding-top: 20px;
+            }
+            h3 {
+              margin-bottom: 10px;
+              color: #333;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="company-name">DreamLadder</div>
+            <div style="color: #666;">Real Estate Solutions</div>
+          </div>
+
+          <div class="receipt-info">
+            <div>
+              <div style="color: #666; font-size: 14px;">Receipt Number</div>
+              <div style="font-weight: bold; font-size: 18px;">${viewingReceipt.receipt_number}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="color: #666; font-size: 14px;">Date</div>
+              <div style="font-weight: bold;">${new Date(viewingReceipt.issue_date).toLocaleDateString()}</div>
+            </div>
+          </div>
+
+          <div class="customer-details">
+            <h3>Customer Details</h3>
+            <div style="font-weight: bold; margin-bottom: 5px;">${viewingReceipt.customer_name}</div>
+            ${viewingReceipt.customer_address ? `<div>${viewingReceipt.customer_address}</div>` : ''}
+            ${viewingReceipt.customer_phone ? `<div>Phone: ${viewingReceipt.customer_phone}</div>` : ''}
+            ${viewingReceipt.customer_email ? `<div>Email: ${viewingReceipt.customer_email}</div>` : ''}
+          </div>
+
+          <div class="payment-details">
+            <div class="detail-row">
+              <span style="color: #666;">Description:</span>
+              <span style="font-weight: bold;">${viewingReceipt.description}</span>
+            </div>
+            <div class="detail-row">
+              <span style="color: #666;">Payment Method:</span>
+              <span style="font-weight: bold; text-transform: capitalize;">${(viewingReceipt.payment_method || '').replace('_', ' ')}</span>
+            </div>
+            <div class="amount-row">
+              <span>Amount Paid:</span>
+              <span style="color: #16a34a;">₹${viewingReceipt.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div class="amount-words">
+              <div style="font-size: 12px; color: #666;">In Words:</div>
+              ${viewingReceipt.amount_in_words}
+            </div>
+          </div>
+
+          ${viewingReceipt.notes ? `
+            <div style="border-top: 1px solid #ddd; padding-top: 20px; margin-bottom: 20px;">
+              <div style="color: #666; font-size: 14px; margin-bottom: 5px;">Notes:</div>
+              <div>${viewingReceipt.notes}</div>
+            </div>
+          ` : ''}
+
+          <div class="footer">
+            <p>This is a computer-generated receipt and does not require a signature.</p>
+            <p style="margin-top: 5px;">Thank you for your business!</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+    printWindow.focus();
+
+    // Trigger print dialog
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -119,7 +269,7 @@ export default function AdminReceipts() {
           <h1 className="text-3xl font-bold">Receipts</h1>
           <p className="text-muted-foreground mt-2">Generate and manage receipts</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowDialog(true); }}>
+        <Button onClick={() => { resetForm(); setShowDialog(true); }} className="text-white">
           <Plus className="mr-2 h-4 w-4" />
           Generate Receipt
         </Button>
@@ -291,7 +441,7 @@ export default function AdminReceipts() {
               <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" className="text-white">
                 Generate Receipt
               </Button>
             </DialogFooter>
@@ -370,6 +520,10 @@ export default function AdminReceipts() {
               <DialogFooter className="print:hidden">
                 <Button variant="outline" onClick={() => setViewingReceipt(null)}>
                   Close
+                </Button>
+                <Button variant="outline" onClick={downloadReceipt}>
+                  <Download className="mr-2 h-4 w-4" />
+                  Download PDF
                 </Button>
                 <Button onClick={printReceipt}>
                   <Download className="mr-2 h-4 w-4" />

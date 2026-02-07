@@ -49,7 +49,7 @@ export default function AdminTransactions() {
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [filters, setFilters] = useState({ type: "", category: "" });
+  const [filters, setFilters] = useState({ type: "all", category: "all" });
   
   const [formData, setFormData] = useState({
     type: "income",
@@ -71,7 +71,10 @@ export default function AdminTransactions() {
 
   const loadTransactions = async () => {
     try {
-      const data = await financialAPI.transactions.list(filters);
+      const apiFilters: any = {};
+      if (filters.type && filters.type !== "all") apiFilters.type = filters.type;
+      if (filters.category && filters.category !== "all") apiFilters.category = filters.category;
+      const data = await financialAPI.transactions.list(apiFilters);
       setTransactions(data);
     } catch (error) {
       toast.error("Failed to load transactions");
@@ -161,7 +164,7 @@ export default function AdminTransactions() {
           <h1 className="text-3xl font-bold">Transactions</h1>
           <p className="text-muted-foreground mt-2">Manage income and expenses</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowDialog(true); }}>
+        <Button onClick={() => { resetForm(); setShowDialog(true); }} className="text-white">
           <Plus className="mr-2 h-4 w-4" />
           Add Transaction
         </Button>
@@ -180,7 +183,7 @@ export default function AdminTransactions() {
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 {TRANSACTION_TYPES.map(t => (
                   <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                 ))}
@@ -194,7 +197,7 @@ export default function AdminTransactions() {
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {[...INCOME_CATEGORIES, ...EXPENSE_CATEGORIES].map(c => (
                   <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
                 ))}
@@ -408,7 +411,7 @@ export default function AdminTransactions() {
               <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" className="text-white">
                 {editingId ? 'Update' : 'Create'} Transaction
               </Button>
             </DialogFooter>

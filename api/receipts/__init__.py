@@ -79,9 +79,129 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         try:
             # GET - List all receipts or get one by ID
             if req.method == "GET":
-            receipt_id = req.route_params.get("id")
-            
-            if receipt_id:
+                receipt_id = req.route_params.get("id")
+                
+                if receipt_id:
+                    receipt = db.query(Receipt).filter(Receipt.id == receipt_id).first()
+                    if not receipt:
+                        return func.HttpResponse(
+                            json.dumps({"error": "Receipt not found"}),
+                            status_code=404,
+                            headers=headers
+                        )
+                    
+                    result = {
+                        "id": receipt.id,
+                        "receipt_number": receipt.receipt_number,
+                        "transaction_id": receipt.transaction_id,
+                        "customer_name": receipt.customer_name,
+                        "customer_phone": receipt.customer_phone,
+                        "customer_email": receipt.customer_email,
+                        "customer_address": receipt.customer_address,
+                        "amount": receipt.amount,
+                        "amount_in_words": receipt.amount_in_words,
+                        "description": receipt.description,
+                        "payment_method": receipt.payment_method.value if receipt.payment_method else None,
+                        "property_details": receipt.property_details,
+                        "issue_date": receipt.issue_date.isoformat(),
+                        "notes": receipt.notes,
+                        "created_at": receipt.created_at.isoformat()
+                    }
+                else:
+                    receipts = db.query(Receipt).order_by(Receipt.issue_date.desc()).all()
+                    result = [{
+                        "id": r.id,
+                        "receipt_number": r.receipt_number,
+                        "customer_name": r.customer_name,
+                        "amount": r.amount,
+                        "description": r.description,
+                        "issue_date": r.issue_date.isoformat(),
+                        "created_at": r.created_at.isoformat()
+                    } for r in receipts]
+                
+                return func.HttpResponse(
+                    json.dumps(result),
+                    status_code=200,
+                    headers=headers
+                )
+        
+            # POST - Create new receipt
+            elif req.method == "POST":
+                try:
+                    data = req.get_json()
+                except ValueError:
+                    return func.HttpResponse(
+                        json.dumps({"error": "Invalid JSON"}),
+                        status_code=400,
+                        headers=headers
+                    )
+                
+                # Validate required fields
+                required_fields = ["customer_name", "amount", "description", "issue_date"]
+                if not all(field in data for field in required_fields):
+                    return func.HttpResponse(
+                        json.dumps({"error": "Missing required fields"}),
+                        status_code=400,
+                        headers=headers
+                    )
+                
+                # Generate receipt number
+                year = datetime.now().year
+                month = datetime.now().month
+                count = db.query(Receipt).filter(
+                    Receipt.receipt_number.like(f"RCP/{year}/{month:02d}/%")
+                ).count()
+                receipt_number = f"RCP/{year}/{month:02d}/{count + 1:04d}"
+                
+                # Convert amount to words
+                amount = float(data["amount"])
+                amount_in_words = number_to_words(int(amount))
+                
+                # Create receipt
+                receipt = Receipt(
+                    id=str(uuid.uuid4()),
+                    receipt_number=receipt_number,
+                    transaction_id=data.get("transaction_id"),
+                    customer_name=data["customer_name"],
+                    customer_phone=data.get("customer_phone"),
+                    customer_email=data.get("customer_email"),
+                    customer_address=data.get("customer_address"),
+                    amount=amount,
+                    amount_in_words=amount_in_words,
+                    description=data["description"],
+                    payment_method=PaymentMethod(data["payment_method"]) if data.get("payment_method") else None,
+                    property_details=data.get("property_details"),
+                    issue_date=datetime.fromisoformat(data["issue_date"]),
+                    notes=data.get("notes"),
+                    created_by=user.get("sub")
+                )
+                
+                db.add(receipt)
+                db.commit()
+                db.refresh(receipt)
+                
+                return func.HttpResponse(
+                    json.dumps({
+                        "id": receipt.id,
+                        "receipt_number": receipt.receipt_number,
+                        "amount": receipt.amount,
+                        "amount_in_words": receipt.amount_in_words,
+                        "message": "Receipt created successfully"
+                    }),
+                    status_code=201,
+                    headers=headers
+                )
+        
+            # PUT - Update receipt
+            elif req.method == "PUT":
+                receipt_id = req.route_params.get("id")
+                if not receipt_id:
+                    return func.HttpResponse(
+                        json.dumps({"error": "Receipt ID required"}),
+                        status_code=400,
+                        headers=headers
+                    )
+                
                 receipt = db.query(Receipt).filter(Receipt.id == receipt_id).first()
                 if not receipt:
                     return func.HttpResponse(
@@ -90,200 +210,80 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                         headers=headers
                     )
                 
-                result = {
-                    "id": receipt.id,
-                    "receipt_number": receipt.receipt_number,
-                    "transaction_id": receipt.transaction_id,
-                    "customer_name": receipt.customer_name,
-                    "customer_phone": receipt.customer_phone,
-                    "customer_email": receipt.customer_email,
-                    "customer_address": receipt.customer_address,
-                    "amount": receipt.amount,
-                    "amount_in_words": receipt.amount_in_words,
-                    "description": receipt.description,
-                    "payment_method": receipt.payment_method.value if receipt.payment_method else None,
-                    "property_details": receipt.property_details,
-                    "issue_date": receipt.issue_date.isoformat(),
-                    "notes": receipt.notes,
-                    "created_at": receipt.created_at.isoformat()
-                }
+                try:
+                    data = req.get_json()
+                except ValueError:
+                    return func.HttpResponse(
+                        json.dumps({"error": "Invalid JSON"}),
+                        status_code=400,
+                        headers=headers
+                    )
+                
+                # Update fields
+                if "customer_name" in data:
+                    receipt.customer_name = data["customer_name"]
+                if "customer_phone" in data:
+                    receipt.customer_phone = data["customer_phone"]
+                if "customer_email" in data:
+                    receipt.customer_email = data["customer_email"]
+                if "customer_address" in data:
+                    receipt.customer_address = data["customer_address"]
+                if "amount" in data:
+                    receipt.amount = float(data["amount"])
+                    receipt.amount_in_words = number_to_words(int(receipt.amount))
+                if "description" in data:
+                    receipt.description = data["description"]
+                if "payment_method" in data:
+                    receipt.payment_method = PaymentMethod(data["payment_method"]) if data["payment_method"] else None
+                if "property_details" in data:
+                    receipt.property_details = data["property_details"]
+                if "issue_date" in data:
+                    receipt.issue_date = datetime.fromisoformat(data["issue_date"])
+                if "notes" in data:
+                    receipt.notes = data["notes"]
+                
+                db.commit()
+                db.refresh(receipt)
+                
+                return func.HttpResponse(
+                    json.dumps({"message": "Receipt updated successfully"}),
+                    status_code=200,
+                    headers=headers
+                )
+        
+            # DELETE - Delete receipt
+            elif req.method == "DELETE":
+                receipt_id = req.route_params.get("id")
+                if not receipt_id:
+                    return func.HttpResponse(
+                        json.dumps({"error": "Receipt ID required"}),
+                        status_code=400,
+                        headers=headers
+                    )
+                
+                receipt = db.query(Receipt).filter(Receipt.id == receipt_id).first()
+                if not receipt:
+                    return func.HttpResponse(
+                        json.dumps({"error": "Receipt not found"}),
+                        status_code=404,
+                        headers=headers
+                    )
+                
+                db.delete(receipt)
+                db.commit()
+                
+                return func.HttpResponse(
+                    json.dumps({"message": "Receipt deleted successfully"}),
+                    status_code=200,
+                    headers=headers
+                )
+            
             else:
-                receipts = db.query(Receipt).order_by(Receipt.issue_date.desc()).all()
-                result = [{
-                    "id": r.id,
-                    "receipt_number": r.receipt_number,
-                    "customer_name": r.customer_name,
-                    "amount": r.amount,
-                    "description": r.description,
-                    "issue_date": r.issue_date.isoformat(),
-                    "created_at": r.created_at.isoformat()
-                } for r in receipts]
-            
-            return func.HttpResponse(
-                json.dumps(result),
-                status_code=200,
-                headers=headers
-            )
-        
-        # POST - Create new receipt
-        elif req.method == "POST":
-            try:
-                data = req.get_json()
-            except ValueError:
                 return func.HttpResponse(
-                    json.dumps({"error": "Invalid JSON"}),
-                    status_code=400,
+                    json.dumps({"error": "Method not allowed"}),
+                    status_code=405,
                     headers=headers
                 )
-            
-            # Validate required fields
-            required_fields = ["customer_name", "amount", "description", "issue_date"]
-            if not all(field in data for field in required_fields):
-                return func.HttpResponse(
-                    json.dumps({"error": "Missing required fields"}),
-                    status_code=400,
-                    headers=headers
-                )
-            
-            # Generate receipt number
-            year = datetime.now().year
-            month = datetime.now().month
-            count = db.query(Receipt).filter(
-                Receipt.receipt_number.like(f"RCP/{year}/{month:02d}/%")
-            ).count()
-            receipt_number = f"RCP/{year}/{month:02d}/{count + 1:04d}"
-            
-            # Convert amount to words
-            amount = float(data["amount"])
-            amount_in_words = number_to_words(int(amount))
-            
-            # Create receipt
-            receipt = Receipt(
-                id=str(uuid.uuid4()),
-                receipt_number=receipt_number,
-                transaction_id=data.get("transaction_id"),
-                customer_name=data["customer_name"],
-                customer_phone=data.get("customer_phone"),
-                customer_email=data.get("customer_email"),
-                customer_address=data.get("customer_address"),
-                amount=amount,
-                amount_in_words=amount_in_words,
-                description=data["description"],
-                payment_method=PaymentMethod(data["payment_method"]) if data.get("payment_method") else None,
-                property_details=data.get("property_details"),
-                issue_date=datetime.fromisoformat(data["issue_date"]),
-                notes=data.get("notes"),
-                created_by=user.id
-            )
-            
-            db.add(receipt)
-            db.commit()
-            db.refresh(receipt)
-            
-            return func.HttpResponse(
-                json.dumps({
-                    "id": receipt.id,
-                    "receipt_number": receipt.receipt_number,
-                    "amount": receipt.amount,
-                    "amount_in_words": receipt.amount_in_words,
-                    "message": "Receipt created successfully"
-                }),
-                status_code=201,
-                headers=headers
-            )
-        
-        # PUT - Update receipt
-        elif req.method == "PUT":
-            receipt_id = req.route_params.get("id")
-            if not receipt_id:
-                return func.HttpResponse(
-                    json.dumps({"error": "Receipt ID required"}),
-                    status_code=400,
-                    headers=headers
-                )
-            
-            receipt = db.query(Receipt).filter(Receipt.id == receipt_id).first()
-            if not receipt:
-                return func.HttpResponse(
-                    json.dumps({"error": "Receipt not found"}),
-                    status_code=404,
-                    headers=headers
-                )
-            
-            try:
-                data = req.get_json()
-            except ValueError:
-                return func.HttpResponse(
-                    json.dumps({"error": "Invalid JSON"}),
-                    status_code=400,
-                    headers=headers
-                )
-            
-            # Update fields
-            if "customer_name" in data:
-                receipt.customer_name = data["customer_name"]
-            if "customer_phone" in data:
-                receipt.customer_phone = data["customer_phone"]
-            if "customer_email" in data:
-                receipt.customer_email = data["customer_email"]
-            if "customer_address" in data:
-                receipt.customer_address = data["customer_address"]
-            if "amount" in data:
-                receipt.amount = float(data["amount"])
-                receipt.amount_in_words = number_to_words(int(receipt.amount))
-            if "description" in data:
-                receipt.description = data["description"]
-            if "payment_method" in data:
-                receipt.payment_method = PaymentMethod(data["payment_method"]) if data["payment_method"] else None
-            if "property_details" in data:
-                receipt.property_details = data["property_details"]
-            if "issue_date" in data:
-                receipt.issue_date = datetime.fromisoformat(data["issue_date"])
-            if "notes" in data:
-                receipt.notes = data["notes"]
-            
-            db.commit()
-            db.refresh(receipt)
-            
-            return func.HttpResponse(
-                json.dumps({"message": "Receipt updated successfully"}),
-                status_code=200,
-                headers=headers
-            )
-        
-        # DELETE - Delete receipt
-        elif req.method == "DELETE":
-            receipt_id = req.route_params.get("id")
-            if not receipt_id:
-                return func.HttpResponse(
-                    json.dumps({"error": "Receipt ID required"}),
-                    status_code=400,
-                    headers=headers
-                )
-            
-            receipt = db.query(Receipt).filter(Receipt.id == receipt_id).first()
-            if not receipt:
-                return func.HttpResponse(
-                    json.dumps({"error": "Receipt not found"}),
-                    status_code=404,
-                    headers=headers
-                )
-            
-            db.delete(receipt)
-            db.commit()
-            
-            return func.HttpResponse(
-                json.dumps({"message": "Receipt deleted successfully"}),
-                status_code=200,
-                headers=headers
-            )
-        
-        else:
-            return func.HttpResponse(
-                json.dumps({"error": "Method not allowed"}),
-                status_code=405,
-                headers=headers
-            )
         
         except Exception as e:
             logging.error(f"Error in receipts endpoint: {str(e)}")
