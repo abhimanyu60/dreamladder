@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Lock, Bell, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { settingsAPI } from "@/lib/api";
 
 const AdminSettings = () => {
   const { toast } = useToast();
@@ -25,6 +26,21 @@ const AdminSettings = () => {
     workingHours: "Mon – Sat, 09:00 AM – 08:00 PM",
   });
 
+  const [hero, setHero] = useState({
+    badgeText: "TRUSTED BY 200+ FAMILIES",
+    heading: "Find Your Perfect Property in",
+    location: "Ranchi",
+    subheading: "Premium residential plots, agricultural land, and commercial properties. Your trusted partner in real estate since 2014.",
+    stat1Value: "50+",
+    stat1Label: "Properties Listed",
+    stat2Value: "200+",
+    stat2Label: "Happy Clients",
+    stat3Value: "10+",
+    stat3Label: "Years Experience",
+    stat4Value: "100%",
+    stat4Label: "Legal Verified",
+  });
+
   const [notifications, setNotifications] = useState({
     emailEnquiries: true,
     emailCallbacks: true,
@@ -37,11 +53,39 @@ const AdminSettings = () => {
     confirm: "",
   });
 
-  const handleSave = (section: string) => {
-    toast({
-      title: "Settings saved",
-      description: `Your ${section} settings have been updated.`,
-    });
+  // Load settings on mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await settingsAPI.getAll();
+        if (response.success && response.data.hero) {
+          setHero(response.data.hero);
+        }
+      } catch (error) {
+        console.error("Failed to fetch settings:", error);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  const handleSave = async (section: string) => {
+    try {
+      if (section === "hero") {
+        await settingsAPI.update({ hero });
+      }
+      
+      toast({
+        title: "Settings saved",
+        description: `Your ${section} settings have been updated.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save settings. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -53,7 +97,7 @@ const AdminSettings = () => {
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="profile" className="flex items-center gap-2">
             <User className="w-4 h-4" />
             <span className="hidden sm:inline">Profile</span>
@@ -61,6 +105,10 @@ const AdminSettings = () => {
           <TabsTrigger value="company" className="flex items-center gap-2">
             <Building className="w-4 h-4" />
             <span className="hidden sm:inline">Company</span>
+          </TabsTrigger>
+          <TabsTrigger value="hero" className="flex items-center gap-2">
+            <Building className="w-4 h-4" />
+            <span className="hidden sm:inline">Hero</span>
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="w-4 h-4" />
@@ -172,6 +220,140 @@ const AdminSettings = () => {
 
             <div className="flex justify-end">
               <Button className="btn-gold" onClick={() => handleSave("company")}>
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Hero Tab */}
+        <TabsContent value="hero">
+          <div className="bg-card rounded-xl border border-border p-6 space-y-6">
+            <h2 className="font-semibold text-lg">Hero Section Settings</h2>
+            
+            <div className="grid gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="badgeText">Badge Text</Label>
+                <Input
+                  id="badgeText"
+                  placeholder="TRUSTED BY 200+ FAMILIES"
+                  value={hero.badgeText}
+                  onChange={(e) => setHero({ ...hero, badgeText: e.target.value })}
+                />
+              </div>
+              
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="heading">Heading</Label>
+                  <Input
+                    id="heading"
+                    placeholder="Find Your Perfect Property in"
+                    value={hero.heading}
+                    onChange={(e) => setHero({ ...hero, heading: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="location">Location (Highlighted)</Label>
+                  <Input
+                    id="location"
+                    placeholder="Ranchi"
+                    value={hero.location}
+                    onChange={(e) => setHero({ ...hero, location: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="subheading">Subheading</Label>
+                <Input
+                  id="subheading"
+                  placeholder="Premium residential plots, agricultural land..."
+                  value={hero.subheading}
+                  onChange={(e) => setHero({ ...hero, subheading: e.target.value })}
+                />
+              </div>
+
+              <div className="border-t pt-4">
+                <h3 className="font-medium mb-4">Statistics</h3>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="stat1Value">Stat 1 Value</Label>
+                    <Input
+                      id="stat1Value"
+                      placeholder="50+"
+                      value={hero.stat1Value}
+                      onChange={(e) => setHero({ ...hero, stat1Value: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stat1Label">Stat 1 Label</Label>
+                    <Input
+                      id="stat1Label"
+                      placeholder="Properties Listed"
+                      value={hero.stat1Label}
+                      onChange={(e) => setHero({ ...hero, stat1Label: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stat2Value">Stat 2 Value</Label>
+                    <Input
+                      id="stat2Value"
+                      placeholder="200+"
+                      value={hero.stat2Value}
+                      onChange={(e) => setHero({ ...hero, stat2Value: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stat2Label">Stat 2 Label</Label>
+                    <Input
+                      id="stat2Label"
+                      placeholder="Happy Clients"
+                      value={hero.stat2Label}
+                      onChange={(e) => setHero({ ...hero, stat2Label: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stat3Value">Stat 3 Value</Label>
+                    <Input
+                      id="stat3Value"
+                      placeholder="10+"
+                      value={hero.stat3Value}
+                      onChange={(e) => setHero({ ...hero, stat3Value: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stat3Label">Stat 3 Label</Label>
+                    <Input
+                      id="stat3Label"
+                      placeholder="Years Experience"
+                      value={hero.stat3Label}
+                      onChange={(e) => setHero({ ...hero, stat3Label: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stat4Value">Stat 4 Value</Label>
+                    <Input
+                      id="stat4Value"
+                      placeholder="100%"
+                      value={hero.stat4Value}
+                      onChange={(e) => setHero({ ...hero, stat4Value: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="stat4Label">Stat 4 Label</Label>
+                    <Input
+                      id="stat4Label"
+                      placeholder="Legal Verified"
+                      value={hero.stat4Label}
+                      onChange={(e) => setHero({ ...hero, stat4Label: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <Button className="btn-gold" onClick={() => handleSave("hero")}>
                 Save Changes
               </Button>
             </div>

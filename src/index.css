@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,31 +6,31 @@
 
 @layer base {
   :root {
-    /* Premium Real Estate Color Palette */
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    /* Clean Modern Real Estate Palette */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 0 0% 0%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 0%;
 
-    /* Deep Navy - Trust & Professionalism */
-    --primary: 222 47% 15%;
-    --primary-foreground: 40 50% 95%;
+    /* Deep Teal - Trust & Sophistication */
+    --primary: 195 100% 25%;
+    --primary-foreground: 0 0% 0%;
 
-    /* Soft Light Gray */
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 222 47% 15%;
+    /* Light Warm Gray */
+    --secondary: 40 20% 97%;
+    --secondary-foreground: 0 0% 0%;
 
     /* Muted tones */
-    --muted: 210 20% 94%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 40 15% 94%;
+    --muted-foreground: 0 0% 0%;
 
-    /* Elegant Gold Accent */
-    --accent: 40 75% 50%;
-    --accent-foreground: 222 47% 11%;
+    /* Warm Orange Accent */
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
@@ -42,24 +42,24 @@
     --radius: 0.75rem;
 
     /* Custom tokens */
-    --gold: 40 75% 50%;
-    --gold-light: 40 70% 60%;
-    --gold-dark: 40 80% 40%;
-    --navy: 222 47% 15%;
-    --navy-light: 222 40% 25%;
-    --navy-dark: 222 50% 10%;
+    --orange: 25 95% 53%;
+    --orange-light: 25 95% 63%;
+    --orange-dark: 25 95% 43%;
+    --teal: 195 100% 25%;
+    --teal-light: 195 100% 35%;
+    --teal-dark: 195 100% 20%;
 
     /* Gradients */
-    --gradient-gold: linear-gradient(135deg, hsl(40 75% 50%), hsl(40 80% 40%));
-    --gradient-navy: linear-gradient(135deg, hsl(222 47% 15%), hsl(222 50% 10%));
-    --gradient-hero: linear-gradient(135deg, hsl(222 47% 12% / 0.95), hsl(222 50% 8% / 0.85));
+    --gradient-orange: linear-gradient(135deg, hsl(25 95% 53%), hsl(25 95% 43%));
+    --gradient-teal: linear-gradient(135deg, hsl(195 100% 25%), hsl(195 100% 20%));
+    --gradient-hero: linear-gradient(135deg, hsl(195 100% 20% / 0.75), hsl(195 100% 30% / 0.85));
 
     /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(222 47% 11% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(222 47% 11% / 0.1), 0 2px 4px -2px hsl(222 47% 11% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(222 47% 11% / 0.1), 0 4px 6px -4px hsl(222 47% 11% / 0.1);
-    --shadow-xl: 0 20px 25px -5px hsl(222 47% 11% / 0.1), 0 8px 10px -6px hsl(222 47% 11% / 0.1);
-    --shadow-gold: 0 4px 14px 0 hsl(40 75% 50% / 0.3);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --shadow-orange: 0 4px 14px 0 hsl(25 95% 53% / 0.3);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -119,41 +119,50 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
+    letter-spacing: -0.01em;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Cormorant Garamond', serif;
     @apply font-semibold tracking-tight;
+    letter-spacing: -0.03em;
   }
 }
 
 @layer components {
   .btn-gold {
-    @apply bg-accent text-primary font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:shadow-lg;
-    box-shadow: var(--shadow-gold);
+    @apply bg-accent text-accent-foreground font-semibold px-6 py-3 rounded-lg transition-all duration-200;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .btn-gold:hover {
-    @apply scale-[1.02];
-    box-shadow: 0 6px 20px 0 hsl(40 75% 50% / 0.4);
+    @apply brightness-110;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
   }
 
   .btn-navy {
-    @apply bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:shadow-lg;
+    @apply bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg transition-all duration-200;
+  }
+
+  .btn-navy:hover {
+    @apply brightness-110;
+    transform: translateY(-1px);
   }
 
   .btn-outline-gold {
-    @apply border-2 border-accent text-accent font-semibold px-6 py-3 rounded-lg transition-all duration-300 hover:bg-accent hover:text-primary;
+    @apply border-2 border-accent text-accent font-semibold px-6 py-3 rounded-lg transition-all duration-200 hover:bg-accent hover:text-accent-foreground;
   }
 
   .card-property {
-    @apply bg-card rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl;
-    box-shadow: var(--shadow-md);
+    @apply bg-card rounded-lg overflow-hidden transition-all duration-300;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
   }
 
   .card-property:hover {
-    @apply -translate-y-1;
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
   }
 
   .section-padding {
@@ -161,11 +170,29 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-accent to-[hsl(40_80%_40%)] bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-orange to-orange-dark bg-clip-text text-transparent;
   }
 
   .glass-effect {
-    @apply backdrop-blur-md bg-white/80;
+    @apply backdrop-blur-md bg-white/95;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    filter: brightness(0.7);
   }
 
   .zoom-animation {

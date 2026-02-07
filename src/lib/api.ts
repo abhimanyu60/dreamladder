@@ -171,6 +171,20 @@ export const dashboardAPI = {
   },
 };
 
+// Settings API
+export const settingsAPI = {
+  getAll: async () => {
+    return apiFetch('/settings');
+  },
+  
+  update: async (settings: any) => {
+    return apiFetch('/settings', {
+      method: 'PUT',
+      body: JSON.stringify(settings),
+    });
+  },
+};
+
 // Health check
 export const healthCheck = async () => {
   return apiFetch('/health');
