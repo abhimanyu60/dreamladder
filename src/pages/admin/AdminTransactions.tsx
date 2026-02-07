@@ -282,8 +282,9 @@ export default function AdminTransactions() {
             </DialogDescription>
           </DialogHeader>
           
+          <form onSubmit={handleSubmit}>
           <div className="overflow-y-auto px-4 sm:px-6 max-h-[calc(85vh-180px)]">
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 pb-4">
+            <div className="space-y-3 sm:space-y-4 pb-4">
               <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="type">Type *</Label>
@@ -407,6 +408,7 @@ export default function AdminTransactions() {
                 />
               </div>
             </div>
+            </div>
           </div>
 
           <DialogFooter className="px-4 pb-4 sm:px-6 sm:pb-6">
@@ -417,7 +419,7 @@ export default function AdminTransactions() {
               {editingId ? 'Update' : 'Create'} Transaction
             </Button>
           </DialogFooter>
-        </form>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

@@ -336,8 +336,9 @@ export default function AdminReceipts() {
             <DialogDescription>Create a new advance receipt for a customer</DialogDescription>
           </DialogHeader>
           
+          <form onSubmit={handleSubmit}>
           <div className="overflow-y-auto px-4 sm:px-6 max-h-[calc(85vh-180px)]">
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 pb-4">
+            <div className="space-y-3 sm:space-y-4 pb-4">
               <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="customer_name">Customer Name *</Label>
@@ -437,6 +438,7 @@ export default function AdminReceipts() {
                 />
               </div>
             </div>
+            </div>
           </div>
 
           <DialogFooter className="px-4 pb-4 sm:px-6 sm:pb-6">
@@ -447,7 +449,7 @@ export default function AdminReceipts() {
               Generate Receipt
             </Button>
           </DialogFooter>
-        </form>
+          </form>
         </DialogContent>
       </Dialog>
 
