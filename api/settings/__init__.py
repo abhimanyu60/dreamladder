@@ -1,7 +1,7 @@
 import azure.functions as func
 import json
 from models import SessionLocal, Setting
-from utils import verify_token
+from utils import get_current_user
 from datetime import datetime
 import uuid
 
@@ -52,8 +52,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         
         elif req.method == "PUT":
             # Verify admin token
-            token = req.headers.get("Authorization", "").replace("Bearer ", "")
-            if not token or not verify_token(token):
+            authorization = req.headers.get("Authorization", "")
+            user = get_current_user(authorization)
+            
+            if not user:
                 return func.HttpResponse(
                     json.dumps({"success": False, "error": {"message": "Unauthorized"}}),
                     status_code=401,
