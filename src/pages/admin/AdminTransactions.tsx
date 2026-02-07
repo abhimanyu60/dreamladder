@@ -158,24 +158,24 @@ export default function AdminTransactions() {
   const categories = formData.type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Transactions</h1>
-          <p className="text-muted-foreground mt-2">Manage income and expenses</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Transactions</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">Manage income and expenses</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowDialog(true); }} className="text-white">
+        <Button onClick={() => { resetForm(); setShowDialog(true); }} className="text-white w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
-          Add Transaction
+          <span className="sm:inline">Add Transaction</span>
         </Button>
       </div>
 
       {/* Filters */}
       <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Filters</CardTitle>
         </CardHeader>
-        <CardContent className="flex gap-4">
+        <CardContent className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1">
             <Label>Type</Label>
             <Select value={filters.type} onValueChange={(value) => setFilters({ ...filters, type: value })}>
@@ -209,11 +209,11 @@ export default function AdminTransactions() {
 
       {/* Transactions Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>All Transactions</CardTitle>
-          <CardDescription>View and manage all financial transactions</CardDescription>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">All Transactions</CardTitle>
+          <CardDescription className="text-sm">View and manage all financial transactions</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -274,7 +274,7 @@ export default function AdminTransactions() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
           <DialogHeader>
             <DialogTitle>{editingId ? 'Edit Transaction' : 'Add Transaction'}</DialogTitle>
             <DialogDescription>
@@ -283,7 +283,7 @@ export default function AdminTransactions() {
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <Label htmlFor="type">Type *</Label>
                 <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value, category: value === 'income' ? 'property_sale' : 'marketing' })}>

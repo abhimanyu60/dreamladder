@@ -263,25 +263,25 @@ export default function AdminReceipts() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Receipts</h1>
-          <p className="text-muted-foreground mt-2">Generate and manage receipts</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Receipts</h1>
+          <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">Generate and manage receipts</p>
         </div>
-        <Button onClick={() => { resetForm(); setShowDialog(true); }} className="text-white">
+        <Button onClick={() => { resetForm(); setShowDialog(true); }} className="text-white w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
-          Generate Receipt
+          <span className="sm:inline">Generate Receipt</span>
         </Button>
       </div>
 
       {/* Receipts Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>All Receipts</CardTitle>
-          <CardDescription>View and manage all generated receipts</CardDescription>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">All Receipts</CardTitle>
+          <CardDescription className="text-sm">View and manage all generated receipts</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -330,14 +330,14 @@ export default function AdminReceipts() {
 
       {/* Generate Receipt Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Generate Receipt</DialogTitle>
             <DialogDescription>Create a new advance receipt for a customer</DialogDescription>
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <Label htmlFor="customer_name">Customer Name *</Label>
                 <Input
@@ -451,7 +451,7 @@ export default function AdminReceipts() {
 
       {/* View Receipt Dialog */}
       <Dialog open={!!viewingReceipt} onOpenChange={() => setViewingReceipt(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
           {viewingReceipt && (
             <div className="space-y-6" id="receipt-print">
               {/* Header */}

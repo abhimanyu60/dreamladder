@@ -18,12 +18,12 @@ const AdminLayout = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-muted/30">
         <AdminSidebar />
-        <main className="flex-1 flex flex-col">
-          <header className="h-14 border-b border-border bg-background flex items-center px-4 gap-4 sticky top-0 z-10">
+        <main className="flex-1 flex flex-col w-full">
+          <header className="h-14 border-b border-border bg-background flex items-center px-3 sm:px-4 gap-2 sm:gap-4 sticky top-0 z-10">
             <SidebarTrigger />
             <div className="flex-1" />
           </header>
-          <div className="flex-1 p-6">
+          <div className="flex-1 p-3 sm:p-4 md:p-6 overflow-x-hidden">
             <Outlet />
           </div>
         </main>
