@@ -34,6 +34,14 @@ const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
     headers,
   });
 
+  // Handle 404 with empty body
+  if (response.status === 404) {
+    const text = await response.text();
+    if (!text) {
+      throw new Error('Endpoint not found');
+    }
+  }
+
   const data = await response.json();
 
   if (!response.ok) {

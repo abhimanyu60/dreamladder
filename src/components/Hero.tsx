@@ -31,8 +31,8 @@ const Hero = () => {
           setHeroSettings(response.data.hero);
         }
       } catch (error) {
-        console.error("Failed to fetch hero settings:", error);
-        // Use default values on error
+        // Silently use default values if settings endpoint doesn't exist yet
+        console.log("Using default hero settings");
       }
     };
 
