@@ -46,10 +46,17 @@ const AdminSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleNavigation = (url: string) => {
+    navigate(url);
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("adminLoggedIn");
@@ -90,7 +97,7 @@ const AdminSidebar = () => {
                       href={item.url}
                       onClick={(e) => {
                         e.preventDefault();
-                        navigate(item.url);
+                        handleNavigation(item.url);
                       }}
                       className="flex items-center gap-3"
                     >
@@ -121,7 +128,7 @@ const AdminSidebar = () => {
                         href={item.url}
                         onClick={(e) => {
                           e.preventDefault();
-                          navigate(item.url);
+                          handleNavigation(item.url);
                         }}
                         className="flex items-center gap-3 pl-2"
                       >
@@ -149,7 +156,7 @@ const AdminSidebar = () => {
                     href="/admin/properties/new"
                     onClick={(e) => {
                       e.preventDefault();
-                      navigate("/admin/properties/new");
+                      handleNavigation("/admin/properties/new");
                     }}
                     className="flex items-center gap-3"
                   >

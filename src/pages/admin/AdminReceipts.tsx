@@ -330,15 +330,15 @@ export default function AdminReceipts() {
 
       {/* Generate Receipt Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle>Generate Receipt</DialogTitle>
             <DialogDescription>Create a new advance receipt for a customer</DialogDescription>
           </DialogHeader>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="customer_name">Customer Name *</Label>
                 <Input
                   id="customer_name"
@@ -348,7 +348,7 @@ export default function AdminReceipts() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="customer_phone">Phone</Label>
                 <Input
                   id="customer_phone"
@@ -357,7 +357,7 @@ export default function AdminReceipts() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="customer_email">Email</Label>
                 <Input
                   id="customer_email"
@@ -367,7 +367,7 @@ export default function AdminReceipts() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="amount">Amount *</Label>
                 <Input
                   id="amount"
@@ -379,7 +379,7 @@ export default function AdminReceipts() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="payment_method">Payment Method</Label>
                 <Select value={formData.payment_method} onValueChange={(value) => setFormData({ ...formData, payment_method: value })}>
                   <SelectTrigger>
@@ -393,7 +393,7 @@ export default function AdminReceipts() {
                 </Select>
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="issue_date">Issue Date *</Label>
                 <Input
                   id="issue_date"
@@ -554,3 +554,4 @@ export default function AdminReceipts() {
     </div>
   );
 }
+

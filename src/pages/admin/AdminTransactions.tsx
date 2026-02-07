@@ -274,7 +274,7 @@ export default function AdminTransactions() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full p-4 sm:p-6">
           <DialogHeader>
             <DialogTitle>{editingId ? 'Edit Transaction' : 'Add Transaction'}</DialogTitle>
             <DialogDescription>
@@ -282,9 +282,9 @@ export default function AdminTransactions() {
             </DialogDescription>
           </DialogHeader>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="type">Type *</Label>
                 <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value, category: value === 'income' ? 'property_sale' : 'marketing' })}>
                   <SelectTrigger>
@@ -298,7 +298,7 @@ export default function AdminTransactions() {
                 </Select>
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="category">Category *</Label>
                 <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                   <SelectTrigger>
@@ -312,7 +312,7 @@ export default function AdminTransactions() {
                 </Select>
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="amount">Amount *</Label>
                 <Input
                   id="amount"
@@ -324,7 +324,7 @@ export default function AdminTransactions() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="transaction_date">Date *</Label>
                 <Input
                   id="transaction_date"
@@ -335,7 +335,7 @@ export default function AdminTransactions() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="payment_method">Payment Method</Label>
                 <Select value={formData.payment_method} onValueChange={(value) => setFormData({ ...formData, payment_method: value })}>
                   <SelectTrigger>
@@ -349,7 +349,7 @@ export default function AdminTransactions() {
                 </Select>
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="reference_number">Reference Number</Label>
                 <Input
                   id="reference_number"
@@ -358,7 +358,7 @@ export default function AdminTransactions() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="customer_name">Customer Name</Label>
                 <Input
                   id="customer_name"
@@ -367,7 +367,7 @@ export default function AdminTransactions() {
                 />
               </div>
 
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="customer_phone">Customer Phone</Label>
                 <Input
                   id="customer_phone"
@@ -421,3 +421,4 @@ export default function AdminTransactions() {
     </div>
   );
 }
+
