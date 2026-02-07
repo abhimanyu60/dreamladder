@@ -46,10 +46,21 @@ const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
 // Auth API
 export const authAPI = {
   login: async (email: string, password: string) => {
-    const data = await apiFetch('/auth/login', {
+    // Don't send Authorization header for login - we're trying to GET a token
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ email, password }),
     });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Login failed');
+    }
+
     if (data.success && data.data.token) {
       setAuthToken(data.data.token);
     }
