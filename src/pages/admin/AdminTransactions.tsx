@@ -274,16 +274,17 @@ export default function AdminTransactions() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full p-4 sm:p-6">
-          <DialogHeader>
+        <DialogContent className="max-w-2xl max-h-[85vh] w-[95vw] sm:w-full">
+          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6">
             <DialogTitle>{editingId ? 'Edit Transaction' : 'Add Transaction'}</DialogTitle>
             <DialogDescription>
               {editingId ? 'Update transaction details' : 'Add a new income or expense transaction'}
             </DialogDescription>
           </DialogHeader>
           
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="overflow-y-auto px-4 sm:px-6 max-h-[calc(85vh-180px)]">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 pb-4">
+              <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="type">Type *</Label>
                 <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value, category: value === 'income' ? 'property_sale' : 'marketing' })}>
@@ -386,7 +387,7 @@ export default function AdminTransactions() {
                 />
               </div>
 
-              <div className="col-span-2">
+              <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
@@ -396,7 +397,7 @@ export default function AdminTransactions() {
                 />
               </div>
 
-              <div className="col-span-2">
+              <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="notes">Notes</Label>
                 <Textarea
                   id="notes"
@@ -406,16 +407,17 @@ export default function AdminTransactions() {
                 />
               </div>
             </div>
+          </div>
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" className="text-white">
-                {editingId ? 'Update' : 'Create'} Transaction
-              </Button>
-            </DialogFooter>
-          </form>
+          <DialogFooter className="px-4 pb-4 sm:px-6 sm:pb-6">
+            <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" className="text-white" onClick={handleSubmit}>
+              {editingId ? 'Update' : 'Create'} Transaction
+            </Button>
+          </DialogFooter>
+        </form>
         </DialogContent>
       </Dialog>
     </div>

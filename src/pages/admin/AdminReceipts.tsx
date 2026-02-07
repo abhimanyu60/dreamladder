@@ -330,14 +330,15 @@ export default function AdminReceipts() {
 
       {/* Generate Receipt Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6">
-          <DialogHeader>
+        <DialogContent className="max-w-2xl max-h-[85vh] w-[95vw] sm:w-full">
+          <DialogHeader className="px-4 pt-4 sm:px-6 sm:pt-6">
             <DialogTitle>Generate Receipt</DialogTitle>
             <DialogDescription>Create a new advance receipt for a customer</DialogDescription>
           </DialogHeader>
           
-          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="overflow-y-auto px-4 sm:px-6 max-h-[calc(85vh-180px)]">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 pb-4">
+              <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="customer_name">Customer Name *</Label>
                 <Input
@@ -404,7 +405,7 @@ export default function AdminReceipts() {
                 />
               </div>
 
-              <div className="col-span-2">
+              <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="customer_address">Customer Address</Label>
                 <Textarea
                   id="customer_address"
@@ -414,7 +415,7 @@ export default function AdminReceipts() {
                 />
               </div>
 
-              <div className="col-span-2">
+              <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
@@ -426,7 +427,7 @@ export default function AdminReceipts() {
                 />
               </div>
 
-              <div className="col-span-2">
+              <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="notes">Additional Notes</Label>
                 <Textarea
                   id="notes"
@@ -436,16 +437,17 @@ export default function AdminReceipts() {
                 />
               </div>
             </div>
+          </div>
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" className="text-white">
-                Generate Receipt
-              </Button>
-            </DialogFooter>
-          </form>
+          <DialogFooter className="px-4 pb-4 sm:px-6 sm:pb-6">
+            <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" className="text-white" onClick={handleSubmit}>
+              Generate Receipt
+            </Button>
+          </DialogFooter>
+        </form>
         </DialogContent>
       </Dialog>
 
