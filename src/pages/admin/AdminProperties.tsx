@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Pencil, Trash2, Eye, Star, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Star, Search, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -103,6 +103,41 @@ const AdminProperties = () => {
     }
   };
 
+  const toggleFlashDeal = async (id: string) => {
+    try {
+      const property = propertyList.find((p) => p.id === id);
+      if (!property) return;
+
+      // If enabling flash deal, set end date to 7 days from now
+      const flashDealEndDate = !property.isFlashDeal 
+        ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        : null;
+
+      await propertiesAPI.update(id, { 
+        isFlashDeal: !property.isFlashDeal,
+        flashDealEndDate 
+      });
+      
+      setPropertyList(
+        propertyList.map((p) =>
+          p.id === id ? { ...p, isFlashDeal: !p.isFlashDeal, flashDealEndDate } : p
+        )
+      );
+      toast({
+        title: "Property updated",
+        description: property.isFlashDeal 
+          ? "Removed from Flash Deals" 
+          : "Added to Flash Deals (7 days)",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update flash deal status",
+        variant: "destructive",
+      });
+    }
+  };
+
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
       residential: "bg-blue-100 text-blue-800",
@@ -167,13 +202,14 @@ const AdminProperties = () => {
               <TableHead>Price</TableHead>
               <TableHead>Area</TableHead>
               <TableHead>Featured</TableHead>
+              <TableHead>Flash Deal</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredProperties.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                   {searchQuery ? "No properties found matching your search" : "No properties yet. Add your first property!"}
                 </TableCell>
               </TableRow>
@@ -213,6 +249,19 @@ const AdminProperties = () => {
                     }`}
                   >
                     <Star className={`w-5 h-5 ${property.featured ? "fill-current" : ""}`} />
+                  </button>
+                </TableCell>
+                <TableCell>
+                  <button
+                    onClick={() => toggleFlashDeal(property.id)}
+                    className={`p-1 rounded transition-colors ${
+                      property.isFlashDeal
+                        ? "text-orange-600"
+                        : "text-muted-foreground hover:text-orange-600"
+                    }`}
+                    title={property.isFlashDeal ? "Remove from Flash Deals" : "Add to Flash Deals (7 days)"}
+                  >
+                    <Zap className={`w-5 h-5 ${property.isFlashDeal ? "fill-current" : ""}`} />
                   </button>
                 </TableCell>
                 <TableCell>

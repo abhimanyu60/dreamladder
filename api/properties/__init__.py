@@ -41,6 +41,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 query = query.filter(Property.type == type_filter)
             if featured is not None:
                 query = query.filter(Property.featured == (featured.lower() == 'true'))
+            
+            # Flash deals filter
+            flash_deals = req.params.get("flash_deals")
+            if flash_deals and flash_deals.lower() == 'true':
+                from datetime import datetime
+                query = query.filter(
+                    Property.is_flash_deal == True,
+                    Property.flash_deal_end_date > datetime.utcnow()
+                )
+            
             if location:
                 query = query.filter(Property.location.ilike(f'%{location}%'))
             if search:
@@ -77,6 +87,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     "type": prop.type.value if prop.type else None,
                     "status": prop.status.value if prop.status else None,
                     "featured": prop.featured,
+                    "isFlashDeal": prop.is_flash_deal,
+                    "flashDealEndDate": prop.flash_deal_end_date.isoformat() if prop.flash_deal_end_date else None,
                     "images": prop.images or [],
                     "amenities": prop.amenities or [],
                     "highlights": prop.highlights or [],

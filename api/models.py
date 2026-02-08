@@ -81,6 +81,8 @@ class Property(Base):
     highlights = Column(JSON, default=list)
     legal_info = Column(JSON, default=dict)
     nearby_places = Column(JSON, default=list)
+    is_flash_deal = Column(Boolean, default=False)
+    flash_deal_end_date = Column(DateTime)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
