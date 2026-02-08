@@ -26,8 +26,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         db = SessionLocal()
         
         if req.method == "GET":
-            # Get property by ID
-            property_obj = db.query(Property).filter(Property.id == property_id).first()
+            # Get property by ID or slug
+            property_obj = db.query(Property).filter(
+                (Property.id == property_id) | (Property.slug == property_id)
+            ).first()
             
             if not property_obj:
                 response, status = create_error_response("NOT_FOUND", "Property not found", 404)
