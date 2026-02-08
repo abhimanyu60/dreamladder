@@ -117,6 +117,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 property_obj.status = body['status']
             if 'featured' in body:
                 property_obj.featured = body['featured']
+            if 'isFlashDeal' in body:
+                property_obj.is_flash_deal = body['isFlashDeal']
+            if 'flashDealEndDate' in body:
+                if body['flashDealEndDate']:
+                    from datetime import datetime
+                    property_obj.flash_deal_end_date = datetime.fromisoformat(body['flashDealEndDate'].replace('Z', '+00:00'))
+                else:
+                    property_obj.flash_deal_end_date = None
             if 'images' in body:
                 property_obj.images = body['images']
             if 'amenities' in body:

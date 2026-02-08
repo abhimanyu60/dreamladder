@@ -105,6 +105,7 @@ export const propertiesAPI = {
     status?: string;
     type?: string;
     featured?: boolean;
+    flash_deals?: boolean;
   }) => {
     const queryParams = new URLSearchParams();
     if (params) {

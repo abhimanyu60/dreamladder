@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import { propertiesAPI } from "@/lib/api";
 
 interface FlashProperty {
   id: string;
@@ -36,10 +37,9 @@ export default function FlashDeals() {
 
   const fetchFlashDeals = async () => {
     try {
-      const response = await fetch("https://dreamladder-api.azurewebsites.net/api/properties?flash_deals=true");
-      const data = await response.json();
-      if (data.success) {
-        setFlashProperties(data.data.items || []);
+      const response = await propertiesAPI.getAll({ flash_deals: true });
+      if (response.success) {
+        setFlashProperties(response.data.properties || []);
       }
     } catch (error) {
       console.error("Failed to fetch flash deals:", error);

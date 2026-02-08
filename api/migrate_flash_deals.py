@@ -9,7 +9,7 @@ import os
 # Use Azure PostgreSQL connection string directly
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://dreamladder_admin:Abhi%40123@dreamladder-db.postgres.database.azure.com:5432/dreamladder_db?sslmode=require"
+    "postgresql://dreamladderadmin:DreamLadder2024!Secure@dreamladder-db.postgres.database.azure.com:5432/dreamladder?sslmode=require"
 )
 
 def migrate():
