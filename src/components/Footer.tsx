@@ -20,10 +20,10 @@ const Footer = () => {
               Helping you climb towards your dream property. Your trusted partner for land investments in Jharkhand.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center hover:bg-accent transition-colors group">
+              <a href="https://www.facebook.com/share/1C9DiYyvL5/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center hover:bg-accent transition-colors group">
                 <Facebook className="w-4 h-4 text-accent group-hover:text-primary" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center hover:bg-accent transition-colors group">
+              <a href="https://www.instagram.com/dream_ladder02?igsh=N2N0ejJtMTA4dGll" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center hover:bg-accent transition-colors group">
                 <Instagram className="w-4 h-4 text-accent group-hover:text-primary" />
               </a>
               <a href="#" className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center hover:bg-accent transition-colors group">
