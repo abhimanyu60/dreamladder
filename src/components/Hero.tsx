@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Phone, MessageCircle, Building2, ArrowRight } from "lucide-react";
+import { Phone, MessageCircle, Building2, ArrowRight, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroBg from "@/assets/hero-bg.jpg";
 import { useState, useEffect } from "react";
@@ -74,6 +74,19 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap gap-4 mb-12 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+            <button
+              onClick={() => {
+                const flashDealsSection = document.getElementById('flash-deals-section');
+                flashDealsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+              className="group relative overflow-hidden"
+            >
+              <Button size="lg" className="gap-2 text-base h-12 px-6 bg-gradient-to-r from-orange-500 via-red-500 to-orange-600 hover:from-orange-600 hover:via-red-600 hover:to-orange-700 text-white border-0 font-bold shadow-2xl transition-all animate-pulse">
+                <Zap className="w-5 h-5 animate-bounce" />
+                ⚡ 7 Days Flash Sale ⚡
+              </Button>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform" />
+            </button>
             <Link to="/properties">
               <Button size="lg" className="btn-gold gap-2 text-base h-12 px-6">
                 <Building2 className="w-5 h-5" />

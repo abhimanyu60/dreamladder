@@ -35,6 +35,17 @@ export default function FlashDeals() {
     return () => clearInterval(timer);
   }, [flashProperties]);
 
+  // Auto-rotate slides every 3 seconds
+  useEffect(() => {
+    if (flashProperties.length <= 1) return;
+    
+    const autoRotate = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % flashProperties.length);
+    }, 3000);
+    
+    return () => clearInterval(autoRotate);
+  }, [flashProperties.length]);
+
   const fetchFlashDeals = async () => {
     try {
       const response = await propertiesAPI.getAll({ flash_deals: true });
@@ -77,7 +88,7 @@ export default function FlashDeals() {
   };
 
   const handlePropertyClick = (slug: string) => {
-    navigate(`/properties/${slug}`);
+    navigate(`/property/${slug}`);
   };
 
   if (flashProperties.length === 0) {
@@ -85,7 +96,7 @@ export default function FlashDeals() {
   }
 
   return (
-    <section className="py-16 sm:py-20 bg-gradient-to-br from-orange-50 via-white to-red-50 relative overflow-hidden">
+    <section id="flash-deals-section" className="py-16 sm:py-20 bg-gradient-to-br from-orange-50 via-white to-red-50 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-orange-200 rounded-full opacity-20 blur-3xl animate-pulse"></div>
@@ -114,9 +125,9 @@ export default function FlashDeals() {
 
         {/* Carousel Section */}
         <div className="mb-16">
-          <div className="relative max-w-5xl mx-auto">
+          <div className="relative w-full">
             {/* Main Carousel */}
-            <div className="relative h-[500px] sm:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative h-[500px] sm:h-[600px] md:h-[700px] rounded-2xl overflow-hidden shadow-2xl">
               {flashProperties.map((property, index) => (
                 <div
                   key={property.id}

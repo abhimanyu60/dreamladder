@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone, Home, Building2, Mail, Info } from "lucide-react";
+import { Menu, X, Phone, Home, Building2, Mail, Info, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
 
@@ -49,6 +49,17 @@ const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-3">
+            <button
+              onClick={() => {
+                const flashDealsSection = document.getElementById('flash-deals-section');
+                flashDealsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }}
+            >
+              <Button size="sm" className="gap-2 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold shadow-md hover:shadow-lg transition-all">
+                <Zap className="w-4 h-4" />
+                7 Days Flash Sale
+              </Button>
+            </button>
             <a href="tel:+917004088007">
               <Button size="sm" className="gap-2 bg-accent text-primary font-semibold hover:bg-accent/90 shadow-md hover:shadow-lg transition-all">
                 <Phone className="w-4 h-4" />
@@ -93,8 +104,18 @@ const Navbar = () => {
                   </Link>
                 );
               })}
-              <div className="flex flex-col gap-2 mt-4 px-4">
-                <a href="tel:+917004088007">
+              <div className="flex flex-col gap-2 mt-4 px-4">                <button
+                  onClick={() => {
+                    const flashDealsSection = document.getElementById('flash-deals-section');
+                    flashDealsSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setIsOpen(false);
+                  }}
+                >
+                  <Button className="w-full gap-2 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-bold shadow-md">
+                    <Zap className="w-4 h-4" />
+                    ⚡ 7 Days Flash Sale
+                  </Button>
+                </button>                <a href="tel:+917004088007">
                   <Button className="w-full gap-2 bg-accent text-primary font-semibold hover:bg-accent/90 shadow-md">
                     <Phone className="w-4 h-4" />
                     +91 7004088007
