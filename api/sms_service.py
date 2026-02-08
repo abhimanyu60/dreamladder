@@ -57,22 +57,20 @@ def send_sms(phone_numbers: List[str], message: str) -> Dict[str, Any]:
             'message': 'No valid phone numbers found'
         }
     
-    # Prepare Fast2SMS request
+    # Prepare Fast2SMS request  
     url = "https://www.fast2sms.com/dev/bulkV2"
-    headers = {
+    
+    # Fast2SMS uses GET with query parameters
+    params = {
         'authorization': api_key,
-        'Content-Type': 'application/json'
-    }
-    payload = {
-        'route': 'q',  # Quick transactional route
-        'message': message[:160],  # Limit to 160 chars
-        'language': 'english',
-        'flash': 0,
+        'route': 'q',
+        'message': message[:160],
+        'flash': '0',
         'numbers': ','.join(cleaned_numbers)
     }
     
     try:
-        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response = requests.get(url, params=params, timeout=10)
         response_data = response.json()
         
         if response.status_code == 200 and response_data.get('return'):
