@@ -5,6 +5,7 @@ from datetime import datetime
 import uuid
 from models import get_db, Transaction, TransactionType, TransactionCategory, PaymentMethod
 from utils import get_current_user
+from sms_service import send_transaction_sms
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Transactions API triggered')
@@ -123,15 +124,36 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 db.commit()
                 db.refresh(transaction)
                 
+                # Send SMS if requested
+                sms_result = None
+                if data.get("send_sms"):
+                    sms_result = send_transaction_sms(
+                        {
+                            'type': transaction.type.value,
+                            'category': transaction.category.value,
+                            'amount': transaction.amount,
+                            'transaction_date': transaction.transaction_date.strftime('%d-%b-%Y'),
+                            'reference_number': transaction.reference_number
+                        },
+                        customer_phone=transaction.customer_phone
+                    )
+                    logging.info(f"SMS result: {sms_result}")
+                
+                response_data = {
+                    "id": transaction.id,
+                    "type": transaction.type.value,
+                    "category": transaction.category.value,
+                    "amount": transaction.amount,
+                    "transaction_date": transaction.transaction_date.isoformat(),
+                    "message": "Transaction created successfully"
+                }
+                
+                if sms_result:
+                    response_data["sms_sent"] = sms_result.get("success", False)
+                    response_data["sms_message"] = sms_result.get("message", "")
+                
                 return func.HttpResponse(
-                    json.dumps({
-                        "id": transaction.id,
-                        "type": transaction.type.value,
-                        "category": transaction.category.value,
-                        "amount": transaction.amount,
-                        "transaction_date": transaction.transaction_date.isoformat(),
-                        "message": "Transaction created successfully"
-                    }),
+                    json.dumps(response_data),
                     status_code=201,
                     headers=headers
                 )

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { financialAPI } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 import { FileText, Plus, Eye, Trash2, Download } from "lucide-react";
@@ -37,6 +38,7 @@ export default function AdminReceipts() {
     payment_method: "cash",
     issue_date: new Date().toISOString().split('T')[0],
     notes: "",
+    send_sms: false,
   });
 
   useEffect(() => {
@@ -105,6 +107,7 @@ export default function AdminReceipts() {
       payment_method: "cash",
       issue_date: new Date().toISOString().split('T')[0],
       notes: "",
+      send_sms: false,
     });
   };
 
@@ -436,6 +439,19 @@ export default function AdminReceipts() {
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   rows={2}
                 />
+              </div>
+              
+              <div className="space-y-1.5 sm:col-span-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="send_sms"
+                    checked={formData.send_sms}
+                    onCheckedChange={(checked) => setFormData({ ...formData, send_sms: checked as boolean })}
+                  />
+                  <Label htmlFor="send_sms" className="font-normal cursor-pointer">
+                    Send SMS notification to co-founders{formData.customer_phone ? " and customer" : ""}
+                  </Label>
+                </div>
               </div>
             </div>
             </div>

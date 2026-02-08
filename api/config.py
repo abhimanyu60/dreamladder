@@ -25,5 +25,10 @@ class Settings:
     SMTP_USER = os.getenv("SMTP_USER", "")
     SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
     EMAIL_FROM = os.getenv("EMAIL_FROM", "noreply@dreamladder.com")
+    
+    # SMS (Fast2SMS)
+    SMS_ENABLED = os.getenv("SMS_ENABLED", "false").lower() == "true"
+    SMS_API_KEY = os.getenv("SMS_API_KEY", "")
+    COFOUNDER_PHONES = os.getenv("COFOUNDER_PHONES", "")  # Comma-separated phone numbers
 
 settings = Settings()

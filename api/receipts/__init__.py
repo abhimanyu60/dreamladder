@@ -5,6 +5,7 @@ from datetime import datetime
 import uuid
 from models import get_db, Receipt, Transaction, PaymentMethod
 from utils import get_current_user
+from sms_service import send_receipt_sms
 
 def number_to_words(n):
     """Convert number to words (Indian numbering system)"""
@@ -180,14 +181,32 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 db.commit()
                 db.refresh(receipt)
                 
+                # Send SMS if requested
+                sms_result = None
+                if data.get("send_sms"):
+                    sms_result = send_receipt_sms({
+                        'receipt_number': receipt.receipt_number,
+                        'amount': receipt.amount,
+                        'customer_name': receipt.customer_name,
+                        'customer_phone': receipt.customer_phone,
+                        'issue_date': receipt.issue_date.strftime('%d-%b-%Y')
+                    })
+                    logging.info(f"SMS result: {sms_result}")
+                
+                response_data = {
+                    "id": receipt.id,
+                    "receipt_number": receipt.receipt_number,
+                    "amount": receipt.amount,
+                    "amount_in_words": receipt.amount_in_words,
+                    "message": "Receipt created successfully"
+                }
+                
+                if sms_result:
+                    response_data["sms_sent"] = sms_result.get("success", False)
+                    response_data["sms_message"] = sms_result.get("message", "")
+                
                 return func.HttpResponse(
-                    json.dumps({
-                        "id": receipt.id,
-                        "receipt_number": receipt.receipt_number,
-                        "amount": receipt.amount,
-                        "amount_in_words": receipt.amount_in_words,
-                        "message": "Receipt created successfully"
-                    }),
+                    json.dumps(response_data),
                     status_code=201,
                     headers=headers
                 )

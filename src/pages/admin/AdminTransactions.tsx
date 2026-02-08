@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { financialAPI } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
 import { Plus, Pencil, Trash2, Filter } from "lucide-react";
@@ -63,6 +64,7 @@ export default function AdminTransactions() {
     customer_email: "",
     transaction_date: new Date().toISOString().split('T')[0],
     notes: "",
+    send_sms: false,
   });
 
   useEffect(() => {
@@ -122,6 +124,7 @@ export default function AdminTransactions() {
       customer_email: transaction.customer_email || "",
       transaction_date: transaction.transaction_date.split('T')[0],
       notes: transaction.notes || "",
+      send_sms: false,
     });
     setShowDialog(true);
   };
@@ -152,6 +155,7 @@ export default function AdminTransactions() {
       customer_email: "",
       transaction_date: new Date().toISOString().split('T')[0],
       notes: "",
+      send_sms: false,
     });
   };
 
@@ -407,12 +411,24 @@ export default function AdminTransactions() {
                   rows={2}
                 />
               </div>
+              
+              <div className="space-y-1.5 sm:col-span-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="send_sms"
+                    checked={formData.send_sms}
+                    onCheckedChange={(checked) => setFormData({ ...formData, send_sms: checked as boolean })}
+                  />
+                  <Label htmlFor="send_sms" className="font-normal cursor-pointer">
+                    Send SMS notification to co-founders{formData.customer_phone ? " and customer" : ""}
+                  </Label>
+                </div>
+              </div>
             </div>
             </div>
           </div>
 
-          <DialogFooter className="px-4 pb-4 sm:px-6 sm:pb-6">
-            <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
+          <DialogFooter className="px-4 pb-4 sm:px-6 sm:pb-6">\n            <Button type="button" variant="outline" onClick={() => setShowDialog(false)}>
               Cancel
             </Button>
             <Button type="submit" className="text-white" onClick={handleSubmit}>
