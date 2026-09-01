@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ArrowLeft, MapPin, Maximize, Tag, CheckCircle2, Phone, MessageCircle, Share2, Heart, ExternalLink } from "lucide-react";
+import SEO from "@/components/SEO";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EnquiryForm from "@/components/EnquiryForm";
@@ -98,6 +99,38 @@ const PropertyDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={`${property.title} — ${displayPrice} | Dream Ladder`}
+        description={(property.shortDescription || property.description || "").slice(0, 155)}
+        path={`/property/${id}`}
+        type="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "RealEstateListing",
+          name: property.title,
+          description: property.description || property.shortDescription,
+          url: `https://dreamladder.lovable.app/property/${id}`,
+          image: Array.isArray(property.images) ? property.images : undefined,
+          offers: {
+            "@type": "Offer",
+            price: typeof property.price === "number" ? property.price : undefined,
+            priceCurrency: "INR",
+            availability: "https://schema.org/InStock",
+          },
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: displayLocation,
+            addressLocality: "Ranchi",
+            addressRegion: "Jharkhand",
+            addressCountry: "IN",
+          },
+          floorSize: displaySize ? { "@type": "QuantitativeValue", name: String(displaySize) } : undefined,
+          amenityFeature: Array.isArray(property.amenities)
+            ? property.amenities.map((a: string) => ({ "@type": "LocationFeatureSpecification", name: a }))
+            : undefined,
+          broker: { "@type": "RealEstateAgent", name: "Dream Ladder" },
+        }}
+      />
       <Navbar />
       
       {/* Breadcrumb */}

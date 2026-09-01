@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import SEO from "@/components/SEO";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
@@ -62,6 +63,11 @@ const Properties = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Land & Plots for Sale in Ranchi — Dream Ladder Listings"
+        description="Browse verified residential, agricultural and investment land listings across Ranchi localities including Bariatu, Ratu, Ormanjhi and Hatia. Filter by type, area and budget."
+        path="/properties"
+      />
       <Navbar />
       
       {/* Hero */}

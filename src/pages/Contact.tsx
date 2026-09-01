@@ -1,4 +1,5 @@
 import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
+import SEO from "@/components/SEO";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import EnquiryForm from "@/components/EnquiryForm";
@@ -46,6 +47,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Contact Dream Ladder — Ranchi Land Consultants"
+        description="Visit our Ashok Nagar office in Ranchi or call +91 7004088007. Open Mon–Sat, 9:00 AM–8:00 PM. Request a call back or send a property enquiry."
+        path="/contact"
+      />
       <Navbar />
       
       {/* Hero */}
