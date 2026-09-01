@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { CheckCircle2, Users, Award, Shield, Target, Heart, ArrowRight } from "lucide-react";
+import SEO from "@/components/SEO";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CTASection from "@/components/CTASection";
@@ -38,6 +39,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="About Dream Ladder — Land Specialists in Ranchi"
+        description="Dream Ladder is a Ranchi-based real estate firm led by Abhishek Singh and Saurav Nath Shahdeo, specialising in plotted developments, land parcels and investment land across Jharkhand."
+        path="/about"
+      />
       <Navbar />
       
       {/* Hero */}
